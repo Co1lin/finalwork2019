@@ -7,7 +7,7 @@ This is the finalwork for the course Basic Programming 2019.
 配置Qt开发环境  
 学习QPainter、QPen、QImage等相关类的使用  
 结合大作业要求确认代码实现的基本框架  
-### Additional：
+### Additional
 完成GitHub组队  
 熟悉基于GitHub的版本控制理念  
 学习基于GitHub的团队协作方式  
