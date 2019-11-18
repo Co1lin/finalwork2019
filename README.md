@@ -20,6 +20,12 @@ c++画sin图像： https://blog.csdn.net/kupepoem/article/details/43307387
 Qt之图形（QPainter的基本绘图）：https://blog.csdn.net/weixin_34341229/article/details/90524866  
 Qt笔记——绘图(QBitmap,QPixmap,QImage,QPicture)：https://www.cnblogs.com/dalanjing/p/8724876.html  
 http://www.cyrus.fun/2018/12/31/QT%E5%9F%BA%E7%A1%807%E2%80%94%E2%80%94%E5%9B%BE%E7%89%87%E5%8A%A0%E8%BD%BD%E5%8F%8A%E4%BF%9D%E5%AD%98/  
+https://blog.csdn.net/louis_815/article/details/54286544
+https://www.devbean.net/2012/12/qt-study-road-2-paint-device/  
+https://www.devbean.net/2012/11/qt-study-road-2-brush-pen/  
+QPen: https://blog.csdn.net/qq_41453285/article/details/100040781  
+https://blog.csdn.net/u013165921/article/details/79393265  
+
 
 ## Qt官方：
 https://doc.qt.io/qt-5/qpen.html  
