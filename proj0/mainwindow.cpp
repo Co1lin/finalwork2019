@@ -27,15 +27,14 @@ void MainWindow::paintEvent(QPaintEvent *)
     //Initial
     ifstream infile;
     infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
-    int width = 0, height = 0;
-    int r, g, b;
+    int width = 1920, height = 1080;
+    int r = 0, g = 0, b = 0;
     int xpos = 0, ypos = 0;
     readHead(infile, width, height, r, g, b, xpos, ypos);
     QImage image(width, height, QImage::Format_ARGB32);
     image.fill({r, g, b});
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing, true);
-
     ini_list();
     //Draw Picture!
     mainProcess(infile);

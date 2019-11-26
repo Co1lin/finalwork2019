@@ -103,7 +103,7 @@ double s2num(const string &s)
 int ini_list()
 {
     tokens["DEF"] = { 1, 2 };
-    tokens["ADD"] = { 1, 2 };
+    tokens["ADD"] = { 2, 2 };
 
     return 0;
 }
@@ -114,94 +114,49 @@ int ini_list()
 int readHead(ifstream &infile, int &width, int &height, int &r, int &g, int &b, int &xpos, int &ypos)
 {
     string in;
-    getline(infile, in);
-    //@SIZE 1920 1080
-    if (in.substr(0, 5) == "@SIZE") //substr(a, b) -> [a, b)
+    for (int i = 1; i <= 3; i++)
     {
-        //unsigned long first = in.find_first_of(' ');
-        unsigned long first = 5;
-        unsigned long second = in.find_last_of(' ');
-        int w = s2num(in.substr(first + 1, second - first - 1));
-        int h = s2num(in.substr(second + 1));
-        if (320 <= w && w <= 1920 && 240 <= h && h <= 1080)
+        infile >> in;
+        if (in == "@SIZE")
         {
-            width = w;
-            height = h;
+            int w, h;
+            infile >> w >> h;
+            if (320 <= w && w <= 1920 && 240 <= h && h <= 1080)
+            {
+                width = w;
+                height = h;
+            }
+            else
+                errorOccurred();    //? head data imcomplete
+        }
+        else if (in == "@BACKGROUND")
+        {
+            int rr, gg, bb;
+            infile >> rr >> gg >> bb;
+            if (0 <= rr && rr <= 255 && 0 <= gg && gg <= 255 && 0 <= bb && bb <= 255)
+            {
+                r = rr;
+                g = gg;
+                b = bb;
+            }
+            else
+                errorOccurred();
+        }
+        else if (in == "@POSITION")
+        {
+            int x, y;
+            infile >> x >> y;
+            if (0 <= x && x <= width - 1 && 0 <= y && y <= height - 1 )
+            {
+                x = xpos;
+                y = ypos;
+            }
+            else
+                errorOccurred();
         }
         else
-            errorOccurred();
+            errorOccurred();    //? head data imcomplete
     }
-    else
-        errorOccurred();
-
-    //@BACKGROUND 255 255 255
-    getline(infile, in);
-    if (in.substr(0, 11) == "@BACKGROUND")
-    {
-        int i = 0;
-        //R
-        string tmp;
-        for (i = 12; i <= in.length() - 1; i++)
-        {
-            if ('0' <= in[i] && in[i] <= '9')
-                tmp += in[i];
-            else if (in[i] == ' ')
-            {
-                r = s2num(tmp);
-                break;
-            }
-        }
-        //G
-        tmp = "";
-        for (i++; i <= in.length() - 1; i++)
-        {
-            if ('0' <= in[i] && in[i] <= '9')
-                tmp += in[i];
-            else if (in[i] == ' ')
-            {
-                g = s2num(tmp);
-                break;
-            }
-        }
-        //B
-        tmp = "";
-        for (i++; i <= in.length() - 1; i++)
-        {
-            if ('0' <= in[i] && in[i] <= '9')
-                tmp += in[i];
-            else if (in[i] == '\0')
-            {
-                b = s2num(tmp);
-                break;
-            }
-        }
-        //Check
-        if (0 <= r && r <= 255 && 0 <= g && g <= 255 && 0 <= b && b <= 255)
-            ;
-        else
-            errorOccurred();
-    }
-    else
-        errorOccurred();
-
-    //@POSITION 959 10
-    getline(infile, in);
-    if (in.substr(0, 9) == "@POSITION")
-    {
-        unsigned long first = 9;
-        unsigned long second = in.find_last_of(' ');
-        int x = s2num(in.substr(first + 1, second - first - 1));
-        int y = s2num(in.substr(second + 1));
-        if (0 <= x && x <= width - 1 && 0 <= y && y <= height - 1)
-        {
-            xpos = x;
-            ypos = y;
-        }
-        else
-            errorOccurred();
-    }
-    else
-        errorOccurred();
 
     return 0;
 }
