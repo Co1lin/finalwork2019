@@ -182,6 +182,7 @@ int readLine(ifstream &infile, myCmd &cmd)
     return 1;
 }
 
+//by Colin
 int myExe(const myCmd &cmd)
 {
     if (cmd.token == 1) //DEF [Name] [Value]
@@ -203,7 +204,7 @@ int myExe(const myCmd &cmd)
 
 void errorOccurred()
 {
-    cout << "Error occurred!\n";
+    cout << "Error occurred!" << endl;;
 }
 
 #endif // MYFUN_H
