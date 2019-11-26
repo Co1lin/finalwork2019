@@ -182,6 +182,7 @@ int readLine(ifstream &infile, myCmd &cmd)
     return 1;
 }
 
+//by Colin
 int myExe(const myCmd &cmd)
 {
     if (cmd.token == 1) //DEF [Name] [Value]
