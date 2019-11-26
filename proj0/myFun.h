@@ -204,7 +204,7 @@ int myExe(const myCmd &cmd)
 
 void errorOccurred()
 {
-    cout << "Error occurred!\n";
+    cout << "Error occurred!" << endl;;
 }
 
 #endif // MYFUN_H
