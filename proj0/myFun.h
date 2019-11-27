@@ -104,6 +104,13 @@ int ini_list()
 {
     tokens["DEF"] = { 1, 2 };
     tokens["ADD"] = { 2, 2 };
+	tokens["MOVE"] = { 3, 1 };
+	tokens["TURN"] = { 4, 1 };
+	tokens["COLOR"] = { 5, 3 };
+    tokens["CLOAK"] = { 6, 0 };
+	tokens["LOOP"] = { 7, 1 };
+	// tokens END
+	
 
     return 0;
 }
