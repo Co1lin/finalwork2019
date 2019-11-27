@@ -1,6 +1,10 @@
 #ifndef MYFUN_H
 #define MYFUN_H
 #include "mainwindow.h"
+#include <QPainter>
+#include <QPen>
+#include <QFile>
+#include <QDir>
 using namespace std;
 
 struct myCmd
@@ -27,8 +31,7 @@ extern vector<myVal> vals;
 double s2num(const string &s);
 int ini_list();
 int readHead(ifstream &infile, int &width, int &height, int &r, int &g, int &b, int &xpos, int &ypos);
-int mainProcess(ifstream &infile);
-int myExe(const myCmd &cmd);
+int myExe(const myCmd &cmd, QPainter &painter);
 int readLine(ifstream &infile, myCmd &cmd);
 void errorOccurred();
 
@@ -39,7 +42,7 @@ struct codeBlock
 
     codeBlock(int &_type):type(_type) {}
 
-    int exec();
+    int exec(QPainter &painter);
 };
 
 auto find_val(const string &s)
@@ -53,7 +56,7 @@ auto find_val(const string &s)
     return it;
 }
 
-int codeBlock::exec()
+int codeBlock::exec(QPainter &painter)
 {
     int tot = this->type == 0 ? 1 : type;
     for (int i = 1; i <= tot; i++)
@@ -61,7 +64,7 @@ int codeBlock::exec()
         int ex_size = vals.size();
         for (int ii = 0; ii <= cmds.size() - 1; ii++)
         {
-            myExe(cmds[ii]);
+            myExe(cmds[ii], painter);
         }
         //delete the local values
         auto start_pos = begin(vals) + ex_size;
@@ -183,7 +186,7 @@ int readLine(ifstream &infile, myCmd &cmd)
 }
 
 //by Colin
-int myExe(const myCmd &cmd)
+int myExe(const myCmd &cmd, QPainter &painter)
 {
     if (cmd.token == 1) //DEF [Name] [Value]
     {
@@ -199,6 +202,7 @@ int myExe(const myCmd &cmd)
         else
             errorOccurred();
     }
+
     return 0;
 }
 
