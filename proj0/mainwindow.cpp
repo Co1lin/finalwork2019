@@ -1,10 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "myFun.h"
-#include <QPainter>
-#include <QPen>
-#include <QFile>
-#include <QDir>
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -22,6 +18,8 @@ MainWindow::~MainWindow()
 map<string, myOpt> tokens;
 vector<myVal> vals;
 
+int mainProcess(ifstream &infile, QPainter &painter);
+
 void MainWindow::paintEvent(QPaintEvent *)
 {
     //Initial
@@ -37,13 +35,13 @@ void MainWindow::paintEvent(QPaintEvent *)
     painter.setRenderHint(QPainter::Antialiasing, true);
     ini_list();
     //Draw Picture!
-    mainProcess(infile);
+    mainProcess(infile, painter);
 
     //Save
     image.save("/Users/colin/github/finalwork2019/proj0/test0.bmp");
 }
 
-int mainProcess(ifstream &infile)
+int mainProcess(ifstream &infile, QPainter &painter)
 {
     while (1)
     {
@@ -51,7 +49,7 @@ int mainProcess(ifstream &infile)
         int ret = readLine(infile, cmd);
         if (!ret)
         {
-            myExe(cmd);
+            myExe(cmd, painter);
         }
         else
             break;
