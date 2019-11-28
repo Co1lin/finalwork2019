@@ -1,0 +1,11 @@
+
+*.o
+*.stash
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/Makefile
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/moc_mainwindow.cpp
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/moc_predefs.h
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents/Info.plist
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents/MacOS/proj0
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents/PkgInfo
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents/Resources/empty.lproj
+build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/ui_mainwindow.h
