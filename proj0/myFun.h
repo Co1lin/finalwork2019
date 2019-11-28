@@ -7,6 +7,12 @@
 #include <QDir>
 using namespace std;
 
+struct  Turtle
+{
+    double x, y;
+    bool not_cloak;
+};
+
 struct myCmd
 {
     int token;
@@ -27,23 +33,26 @@ struct myVal
 
 extern map<string, myOpt> tokens;
 extern vector<myVal> vals;
+extern Turtle turtle;
+extern ifstream infile;
 
 double s2num(const string &s);
 int ini_list();
-int readHead(ifstream &infile, int &width, int &height, int &r, int &g, int &b, int &xpos, int &ypos);
+int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, double &ypos);
 int myExe(const myCmd &cmd, QPainter &painter);
-int readLine(ifstream &infile, myCmd &cmd);
+int readLine(myCmd &cmd);
 void errorOccurred();
 
 struct codeBlock
 {
     vector<myCmd> cmds;
-    int &type;
+    const int &type;
 
-    codeBlock(int &_type):type(_type) {}
+    codeBlock(const int &_type):type(_type) {}
 
     int exec(QPainter &painter);
 };
+extern vector<codeBlock> funs;
 
 auto find_val(const string &s)
 {
@@ -74,20 +83,45 @@ int codeBlock::exec(QPainter &painter)
     return 0;
 }
 
-double s2num(const string &s)
+double s2num(const string &_s)
 {
+    int minus = 1;
+    string s;
+    if (_s[0] == '-')    //-1.345, l = 6
+    {
+        s = _s.substr(1, _s.length() - 1);
+        minus = -1;
+    }
+    else
+        s = _s;
+    //deal with '-' completed
     auto point_pos = s.find('.');
     int l = s.length();
-    if (point_pos == s.npos)
+    if (point_pos == s.npos)    //integer type
     {
-        int ten = 1;
-        int num = 0;
-        for (int i = l - 1; i >= 0; i--)
+        if ('0' <= s[0] && s[0] <= '9')
         {
-            num += (s[i] - '0') * ten;
-            ten *= 10;
+            int ten = 1;
+            int num = 0;
+            for (int i = l - 1; i >= 0; i--)
+            {
+                num += (s[i] - '0') * ten;
+                ten *= 10;
+            }
+            return minus * num;
         }
-        return num;
+        else if (('A' <= s[0] && s[0] <= 'Z') || ('a' <= s[0] && s[0] <= 'z'))
+        {
+            auto it = find_val(s);
+            if (it != vals.rend())   //find it!
+            {
+                return minus * it->val;
+            }
+            else
+                errorOccurred();
+        }
+        else
+            errorOccurred();
     }
     else
     {
@@ -99,14 +133,22 @@ double s2num(const string &s)
             num += (s[i] - '0') * ten;
             ten /= 10;
         }
-        return num;
+        return minus * num;
     }
 }
 
 int ini_list()
 {
-    tokens["DEF"] = { 1, 2 };
-    tokens["ADD"] = { 2, 2 };
+    tokens["DEF"]   = { 1, 2 };
+    tokens["ADD"]   = { 2, 2 };
+    tokens["MOVE"]  = { 3, 1 };
+    tokens["TURN"]  = { 4, 1 };
+    tokens["COLOR"] = { 5, 3 };
+    tokens["CLOAK"] = { 6, 0 };
+    tokens["LOOP"]  = { 7, 1 };
+    tokens["END"]   = { 8, 1 };
+    tokens["CALL"]  = { 9, 1 };
+    tokens["FUNC"]  = { 10, 1 };
 
     return 0;
 }
@@ -114,7 +156,7 @@ int ini_list()
 //by Colin
 //There are too many arguments! It seems ugly, but it CAN run whatever.
 //So, let it be!
-int readHead(ifstream &infile, int &width, int &height, int &r, int &g, int &b, int &xpos, int &ypos)
+int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, double &ypos)
 {
     string in;
     for (int i = 1; i <= 3; i++)
@@ -151,8 +193,8 @@ int readHead(ifstream &infile, int &width, int &height, int &r, int &g, int &b, 
             infile >> x >> y;
             if (0 <= x && x <= width - 1 && 0 <= y && y <= height - 1 )
             {
-                x = xpos;
-                y = ypos;
+                xpos = x;
+                ypos = y;
             }
             else
                 errorOccurred();
@@ -165,12 +207,12 @@ int readHead(ifstream &infile, int &width, int &height, int &r, int &g, int &b, 
 }
 
 //by Colin
-int readLine(ifstream &infile, myCmd &cmd)
+int readLine(myCmd &cmd)  //read Cmd
 {
     string input;
     while (infile >> input)
     {
-        map<string, myOpt>::iterator find = tokens.find(input);
+        auto find = tokens.find(input);
         if (find != tokens.end())
         {
             cmd.token = find->second.id;
@@ -179,10 +221,12 @@ int readLine(ifstream &infile, myCmd &cmd)
                 infile >> input;
                 cmd.data.push_back(input);
             }
+            return cmd.token;
         }
-        return 0;
+        else
+            return -1;
     }
-    return 1;
+    return -2;  //read EOF
 }
 
 //by Colin
@@ -202,13 +246,53 @@ int myExe(const myCmd &cmd, QPainter &painter)
         else
             errorOccurred();
     }
+    else if (cmd.token == 7)    //LOOP [Value]
+    {
+        //construct a codeBlock first
+        const int loop_num = s2num(cmd.data[0]);
+        codeBlock loop_block(loop_num);
+        while (1)
+        {
+            myCmd sub_cmd;
+            int ret = readLine(sub_cmd);
+            if (ret > 0)
+            {
+                if (ret != 8)   //not reach END LOOP
+                {
+                    loop_block.cmds.push_back(sub_cmd);
+                }
+                else    //read END
+                {
+                    if (sub_cmd.data[0] == "LOOP")
+                    {
+                        break;  //stop while loop (stop inserting sub_cmd)
+                    }
+                    else
+                        errorOccurred();
+                }
+            }
+            else
+                errorOccurred();
+            //end if
+        }//end while
+        //Execute!
+        loop_block.exec(painter);
+    }
+    else if (cmd.token == 10)   //FUNC [Name]([Para 1],[Para 2],...,[Para n])
+    {
+        const int fun_type = 0;
+        codeBlock fun_block(fun_type);
+    }
+
+    else
+        errorOccurred();
 
     return 0;
 }
 
 void errorOccurred()
 {
-    cout << "Error occurred!" << endl;;
+    cout << "Error occurred!" << endl;
 }
 
 #endif // MYFUN_H
