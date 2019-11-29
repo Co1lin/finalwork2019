@@ -17,13 +17,13 @@ MainWindow::~MainWindow()
 }
 
 map<string, myOpt> tokens;
-vector<myvar> vars;
+vector<myVar> vars;
 vector<codeBlock> funs;
 bool in_block = 0;
 ifstream infile;
-Turtle turtle = { 0, 0, 1 };
+Turtle turtle = { 0, 0, 0, 1 };
 
-int mainProcess(ifstream &infile, QPainter &painter);
+int mainProcess(QPainter &painter);
 
 void MainWindow::paintEvent(QPaintEvent *)
 {
@@ -32,7 +32,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     //"/Users/colin/github/finalwork2019/build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents"
     //QString current_path = QCoreApplication::applicationDirPath();
     QString current_path = "/Users/colin/github/finalwork2019/proj0";
-    QString input_file = current_path + "/test1.logo";
+    QString input_file = current_path + "/eg11.logo";
     //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
     infile.open(input_file.toStdString());
     int width = 1920, height = 1080;
@@ -43,16 +43,23 @@ void MainWindow::paintEvent(QPaintEvent *)
     image.fill({r, g, b});
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing, true);
+    QPen pen;
+    pen.setColor(QColor(0, 0, 0));
+    pen.setWidth(3);
+    pen.setStyle(Qt::SolidLine);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
+    painter.setPen(pen);
     ini_list();
     //Draw Picture!
-    mainProcess(infile, painter);
+    mainProcess(painter);
 
     //Save
-    QString output_file = current_path + "/test0.bmp";
+    QString output_file = current_path + "/eg11.bmp";
     image.save(output_file);
 }
 
-int mainProcess(ifstream &infile, QPainter &painter)
+int mainProcess(QPainter &painter)
 {
     vector<myCmd>::iterator fake;
     while (1)

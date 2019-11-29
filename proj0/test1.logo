@@ -4,10 +4,18 @@
 
 FUNC addLife(life_time,expected, count)
     LOOP count
-		ADD life_time expected
+    	ADD expected 1
+    	LOOP count
+			ADD life_time expected
+		END LOOP
     END LOOP
+END FUNC
+
+FUNC editTime( )
+	ADD TIME -1
 END FUNC
 
 DEF HAHA 1
 DEF TIME 18
 CALL addLife(TIME, HAHA,3)
+CALL editTime(  )

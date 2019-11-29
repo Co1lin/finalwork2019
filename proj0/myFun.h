@@ -7,10 +7,40 @@
 #include <QDir>
 using namespace std;
 
+static const double pi = 3.141592653589792;
+
 struct  Turtle
 {
-    double x, y;
+    double x, y, angle;
     bool not_cloak;
+
+    void cloak()
+    {
+        not_cloak = 0;
+    }
+    void appear()
+    {
+        not_cloak = 1;
+    }
+
+    void turn(const double &delta)
+    {
+        angle += delta;
+        while (angle >= 360)
+            angle -= 360;
+    }
+
+    void move(const double &distance, QPainter &painter)
+    {
+        double xx = x + distance * cos(pi * angle / 180);
+        double yy = y + distance * sin(pi * angle / 180);
+        QPointF p1(x, y), p2(xx, yy);
+        if (not_cloak)
+            painter.drawLine(p1, p2);
+            //painter.drawLine(x, y, xx, yy);
+        x = xx;
+        y = yy;
+    }
 };
 
 struct myCmd
@@ -25,14 +55,14 @@ struct myOpt
     int var_num;
 };
 
-struct myvar
+struct myVar
 {
     string name;
     double var;
 };
 
 extern map<string, myOpt> tokens;
-extern vector<myvar> vars;
+extern vector<myVar> vars;
 extern Turtle turtle;
 extern ifstream infile;
 
@@ -277,11 +307,38 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
         else
             errorOccurred();
     }
+    else if (cmd.token == 3)    //MOVE [Step]
+    {
+        turtle.move(s2num(cmd.data[0]), painter);
+    }
+    else if (cmd.token == 4)    //TURN [Angle]
+    {
+        turtle.turn(s2num(cmd.data[0]));
+    }
+    else if (cmd.token == 5)    //COLOR [R] [G] [B]
+    {
+        turtle.appear();
+        int r = s2num(cmd.data[0]);
+        int g = s2num(cmd.data[1]);
+        int b = s2num(cmd.data[2]);
+        QPen pen;
+        pen.setColor(QColor(r, g, b));
+        pen.setWidth(3);
+        pen.setStyle(Qt::SolidLine);
+        pen.setCapStyle(Qt::RoundCap);
+        pen.setJoinStyle(Qt::RoundJoin);
+        painter.setPen(pen);
+    }
+    else if (cmd.token == 6)    //CLOAK
+    {
+        turtle.cloak();
+    }
     else if (cmd.token == 7)    //LOOP [value]
     {
         //construct a codeBlock first
         const int loop_num = s2num(cmd.data[0]);
         codeBlock loop_block(loop_num);
+        int fake_stack = 0;
         while (1)
         {
             myCmd sub_cmd;
@@ -294,6 +351,8 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                 ret = in_block_cmd->token;
                 sub_cmd.token = ret;
                 sub_cmd.data = in_block_cmd->data;
+                if (ret == 7)
+                    fake_stack++;
             }
             if (ret > 0)
             {
@@ -305,7 +364,13 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                 {
                     if (sub_cmd.data[0] == "LOOP")
                     {
-                        break;  //stop while loop (stop inserting sub_cmd)
+                        if (fake_stack == 0)
+                            break;  //stop while loop (stop inserting sub_cmd)
+                        else
+                        {
+                            loop_block.cmds.push_back(sub_cmd);
+                            fake_stack--;
+                        }
                     }
                     else
                         errorOccurred();
@@ -345,7 +410,8 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
         //store parameters
         string var_name("");
         //while ((cmd.data[0])[i_pos] != ')')  //( para1 , para2 )    ; ( )
-        while ((fun_block.cmds.size() == 0 && (cmd.data[0])[i_pos] != ')') || fun_block.cmds.size() != 0)
+        //while ((fun_block.cmds.size() == 0 && (cmd.data[0])[i_pos] != ')') || fun_block.cmds.size() != 0)
+        while (var_name.length() == 0 && (cmd.data[0])[i_pos] != ')' || var_name.length() != 0)
         {
             if (i_pos >= cmd_data_length)
             {
@@ -430,7 +496,8 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
             string para("");
             //while ((cmd.data[0])[i_pos] != ')')  //( para1 , para2 )    ; ( )
             int have_ini = 0;
-            while ((this_fun->cmds.size() == 0 && (cmd.data[0])[i_pos] != ')') || this_fun->cmds.size() != 0)
+            //while ((this_fun->cmds.size() == 0 && (cmd.data[0])[i_pos] != ')') || this_fun->cmds.size() != 0)
+            while (para.length() == 0 && (cmd.data[0])[i_pos] != ')' || para.length() != 0)
             {
                 if (i_pos >= cmd_data_length)
                 {
@@ -478,6 +545,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
         //delete the "ADD" command of parameters 123123456
         this_fun->cmds.erase(this_fun->cmds.begin() + this_fun->para_num, this_fun->cmds.end() - this_fun->cmd_num);
     }//end else if of CALL
+
     else
         errorOccurred();
 
