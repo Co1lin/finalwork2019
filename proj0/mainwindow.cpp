@@ -17,8 +17,9 @@ MainWindow::~MainWindow()
 }
 
 map<string, myOpt> tokens;
-vector<myVal> vals;
+vector<myvar> vars;
 vector<codeBlock> funs;
+bool in_block = 0;
 ifstream infile;
 Turtle turtle = { 0, 0, 1 };
 
@@ -31,7 +32,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     //"/Users/colin/github/finalwork2019/build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents"
     //QString current_path = QCoreApplication::applicationDirPath();
     QString current_path = "/Users/colin/github/finalwork2019/proj0";
-    QString input_file = current_path + "/test0.logo";
+    QString input_file = current_path + "/test1.logo";
     //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
     infile.open(input_file.toStdString());
     int width = 1920, height = 1080;
@@ -53,15 +54,16 @@ void MainWindow::paintEvent(QPaintEvent *)
 
 int mainProcess(ifstream &infile, QPainter &painter)
 {
+    vector<myCmd>::iterator fake;
     while (1)
     {
         myCmd cmd;
         int ret = readLine(cmd);
         if (ret > 0)
         {
-            myExe(cmd, painter);
+            myExe(cmd, painter, fake);
         }
-        else if (ret == -1) //read invalid token
+        else if (ret == -1) //read invarid token
             errorOccurred();
         else
             break;

@@ -22,42 +22,57 @@ struct myCmd
 struct myOpt
 {
     int id;
-    int val_num;
+    int var_num;
 };
 
-struct myVal
+struct myvar
 {
     string name;
-    double val;
+    double var;
 };
 
 extern map<string, myOpt> tokens;
-extern vector<myVal> vals;
+extern vector<myvar> vars;
 extern Turtle turtle;
 extern ifstream infile;
 
-double s2num(const string &s);
-int ini_list();
+double s2num(const string &s);  //convert a string(number string or variate string) to a double type number
+int ini_list(); //initialize the token map
 int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, double &ypos);
-int myExe(const myCmd &cmd, QPainter &painter);
+int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block_cmd);
 int readLine(myCmd &cmd);
 void errorOccurred();
 
 struct codeBlock
 {
     vector<myCmd> cmds;
-    const int &type;
+    int type;
+    string name;    //function name
+    int para_num;
+    int cmd_num;
 
     codeBlock(const int &_type):type(_type) {}
 
     int exec(QPainter &painter);
 };
-extern vector<codeBlock> funs;
+extern vector<codeBlock> funs;  //I'm here!
+extern bool in_block;
 
-auto find_val(const string &s)
+auto find_var(const string &s)
 {
-    auto it = vals.rbegin();
-    for (; it != vals.rend(); it++)
+    auto it = vars.rbegin();
+    for (; it != vars.rend(); it++)
+    {
+        if (it->name == s)
+            break;
+    }
+    return it;
+}
+
+auto find_fun(const string &s)
+{
+    auto it = funs.begin();
+    for (; it != funs.end(); it++)
     {
         if (it->name == s)
             break;
@@ -67,19 +82,27 @@ auto find_val(const string &s)
 
 int codeBlock::exec(QPainter &painter)
 {
+    bool old_status = in_block;
+    in_block = 1;
     int tot = this->type == 0 ? 1 : type;
     for (int i = 1; i <= tot; i++)
     {
-        int ex_size = vals.size();
-        for (int ii = 0; ii <= cmds.size() - 1; ii++)
+        int ex_size = vars.size();
+        /*for (int ii = 0; ii <= cmds.size() - 1; ii++)
         {
-            myExe(cmds[ii], painter);
+            myExe(cmds[ii], painter, );
+        }*/
+        for (auto it = cmds.begin(); it != cmds.end(); it++)
+        {
+            myExe(*it, painter, it);
         }
-        //delete the local values
-        auto start_pos = begin(vals) + ex_size;
-        auto end_pos = begin(vals) + vals.size();
-        vals.erase(start_pos, end_pos);
+        //delete the local variates
+        //auto start_pos = begin(vars) + ex_size;
+        //auto end_pos = begin(vars) + vars.size();
+        //vars.erase(start_pos, end_pos);
+        vars.erase(vars.begin() + ex_size, vars.end());
     }
+    in_block = old_status;
     return 0;
 }
 
@@ -112,10 +135,10 @@ double s2num(const string &_s)
         }
         else if (('A' <= s[0] && s[0] <= 'Z') || ('a' <= s[0] && s[0] <= 'z'))
         {
-            auto it = find_val(s);
-            if (it != vals.rend())   //find it!
+            auto it = find_var(s);
+            if (it != vars.rend())   //find it!
             {
-                return minus * it->val;
+                return minus * it->var;
             }
             else
                 errorOccurred();
@@ -216,9 +239,17 @@ int readLine(myCmd &cmd)  //read Cmd
         if (find != tokens.end())
         {
             cmd.token = find->second.id;
-            for (int i = 1; i <= find->second.val_num; i++)
+            if (cmd.token != 9 && cmd.token != 10)
             {
-                infile >> input;
+                for (int i = 1; i <= find->second.var_num; i++)
+                {
+                    infile >> input;
+                    cmd.data.push_back(input);
+                }
+            }
+            else    //read the whole line when reach FUNC or CALL (to avoid possible space)
+            {
+                getline(infile, input);
                 cmd.data.push_back(input);
             }
             return cmd.token;
@@ -230,23 +261,23 @@ int readLine(myCmd &cmd)  //read Cmd
 }
 
 //by Colin
-int myExe(const myCmd &cmd, QPainter &painter)
+int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block_cmd)
 {
-    if (cmd.token == 1) //DEF [Name] [Value]
+    if (cmd.token == 1) //DEF [Name] [value]
     {
-        vals.push_back( { cmd.data[0], s2num(cmd.data[1]) } );
+        vars.push_back( { cmd.data[0], s2num(cmd.data[1]) } );
     }
-    else if (cmd.token == 2)    //ADD [Name] [Value]
+    else if (cmd.token == 2)    //ADD [Name] [value]
     {
-        auto it = find_val(cmd.data[0]);
-        if (it != vals.rend())  //find it!
+        auto it = find_var(cmd.data[0]);
+        if (it != vars.rend())  //find it!
         {
-            it->val += s2num(cmd.data[1]);
+            it->var += s2num(cmd.data[1]);
         }
         else
             errorOccurred();
     }
-    else if (cmd.token == 7)    //LOOP [Value]
+    else if (cmd.token == 7)    //LOOP [value]
     {
         //construct a codeBlock first
         const int loop_num = s2num(cmd.data[0]);
@@ -254,7 +285,16 @@ int myExe(const myCmd &cmd, QPainter &painter)
         while (1)
         {
             myCmd sub_cmd;
-            int ret = readLine(sub_cmd);
+            int ret = 0;
+            if (in_block == 0)
+                ret = readLine(sub_cmd);
+            else    //in_block == 1
+            {
+                in_block_cmd++;
+                ret = in_block_cmd->token;
+                sub_cmd.token = ret;
+                sub_cmd.data = in_block_cmd->data;
+            }
             if (ret > 0)
             {
                 if (ret != 8)   //not reach END LOOP
@@ -282,8 +322,162 @@ int myExe(const myCmd &cmd, QPainter &painter)
     {
         const int fun_type = 0;
         codeBlock fun_block(fun_type);
-    }
-
+        fun_block.para_num = 0;
+        auto cmd_data_length = cmd.data[0].length();
+        int i_pos = 0;
+        //store function name first
+        fun_block.name = "";
+        for (i_pos = 0; i_pos <= cmd_data_length - 1; i_pos++)
+        {
+            char tmp = (cmd.data[0])[i_pos];
+            if (tmp != ' ') //ignore all spaces
+            {
+                if (tmp == '(')
+                    break;
+                else
+                {
+                    fun_block.name += tmp;
+                }
+            }
+        }//end for
+        while ((cmd.data[0])[++i_pos] == ' ')
+            /* ignore possible spaces */;
+        //store parameters
+        string var_name("");
+        //while ((cmd.data[0])[i_pos] != ')')  //( para1 , para2 )    ; ( )
+        while ((fun_block.cmds.size() == 0 && (cmd.data[0])[i_pos] != ')') || fun_block.cmds.size() != 0)
+        {
+            if (i_pos >= cmd_data_length)
+            {
+                errorOccurred();
+                break;
+            }
+            if ((cmd.data[0])[i_pos] != ' ')
+            {
+                char tmp = (cmd.data[0])[i_pos];
+                if (tmp != ',' && tmp != ')')
+                {
+                    var_name += tmp;
+                }
+                else
+                {
+                    //add a new parameter definition(named var_name)!
+                    myCmd para_def;
+                    para_def.token = 1;
+                    para_def.data.push_back(var_name);
+                    para_def.data.push_back("0");
+                    fun_block.cmds.push_back(para_def);
+                    fun_block.para_num++;
+                    var_name = "";
+                    if (tmp == ')')
+                        break;
+                }
+            }
+            i_pos++;
+        }//end while
+        //store commands inside the function
+        fun_block.cmd_num = 0;
+        while (1)
+        {
+            myCmd cmd;
+            int ret = readLine(cmd);
+            if ((ret > 0 && ret != 8) || (ret == 8 && cmd.data[0] != "FUNC"))
+            {
+                if (ret != 10)
+                {
+                    fun_block.cmds.push_back(cmd);
+                    fun_block.cmd_num++;
+                }
+                else
+                    errorOccurred();    //You can't define a function inside a function!
+            }
+            else if (ret == -1) //read invalid token
+                errorOccurred();
+            else if (ret == -2 || ret == 8)
+                break;
+        }
+        //store the function
+        funs.push_back(fun_block);
+    }//end else if of FUNC
+    else if (cmd.token == 9)    //CALL [Name]([Para 1],[Para 2],...,[Para n])
+    {
+        auto cmd_data_length = cmd.data[0].length();
+        int i_pos = 0;
+        //store function name first
+        string fun_name = "";
+        for (i_pos = 0; i_pos <= cmd_data_length - 1; i_pos++)
+        {
+            char tmp = (cmd.data[0])[i_pos];
+            if (tmp != ' ') //ignore all spaces
+            {
+                if (tmp == '(')
+                    break;
+                else
+                {
+                    fun_name += tmp;
+                }
+            }
+        }//end for
+        auto this_fun = find_fun(fun_name);
+        //auto ex_size = this_fun->cmds.size();
+        //auto origin_end = cmd_it + ex_size;
+        if (this_fun != funs.end()) //find this function!
+        {
+            while ((cmd.data[0])[++i_pos] == ' ')
+                /* ignore possible spaces */;
+            //initialize the parameters (insert "ADD" commands)
+            auto cmd_it = this_fun->cmds.begin();
+            string para("");
+            //while ((cmd.data[0])[i_pos] != ')')  //( para1 , para2 )    ; ( )
+            int have_ini = 0;
+            while ((this_fun->cmds.size() == 0 && (cmd.data[0])[i_pos] != ')') || this_fun->cmds.size() != 0)
+            {
+                if (i_pos >= cmd_data_length)
+                {
+                    errorOccurred();
+                    break;
+                }
+                if ((cmd.data[0])[i_pos] != ' ')
+                {
+                    char tmp = (cmd.data[0])[i_pos];
+                    if (tmp != ',' && tmp != ')')
+                    {
+                        para += tmp;
+                    }
+                    else
+                    {
+                        if (cmd_it != this_fun->cmds.begin() + this_fun->para_num)
+                        {
+                            //initialize this parameter(named var_name) for the function(this_fun)!
+                            myCmd ini_var;
+                            ini_var.token = 2;  //ADD
+                            ini_var.data.push_back(cmd_it->data[0]);
+                            ini_var.data.push_back(para);
+                            //this_fun->cmds.push_back(ini_var);
+                            this_fun->cmds.insert(this_fun->cmds.end() - this_fun->cmd_num, ini_var);
+                            have_ini++;
+                            cmd_it = this_fun->cmds.begin() + have_ini;
+                            para = "";
+                            if (tmp == ')')
+                                break;
+                        }
+                        else
+                            errorOccurred();    //number of parameters exceed!
+                    }
+                }
+                i_pos++;
+            }//end while
+            //initializing ended
+            if (cmd_it != this_fun->cmds.end() - this_fun->cmd_num)
+                /*Warning: number of parameters is less than the definition*/;
+        }//end if
+        else
+            errorOccurred();    //Can't find function named fun_name
+        //CALL the FUNC!
+        this_fun->exec(painter);
+        //delete the "ADD" command of parameters 123123456
+        this_fun->cmds.erase(this_fun->cmds.begin() + this_fun->para_num, this_fun->cmds.end() - this_fun->cmd_num);
+    }//end else if of CALL
     else
         errorOccurred();
 
