@@ -34,7 +34,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     //QString current_path = "/Users/colin/github/finalwork2019/proj0";
     QRegExp re("/[^/]*\.app/.*");   //don't use "?" ! I don't know why.
     current_path.replace(re, "");
-    QString input_file = current_path + "/eg11.logo";
+    QString input_file = current_path + "/input.logo";
     //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
     infile.open(input_file.toStdString());
     int width = 1920, height = 1080;
@@ -57,7 +57,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     mainProcess(painter);
 
     //Save
-    QString output_file = current_path + "/eg11.bmp";
+    QString output_file = current_path + "/output.bmp";
     image.save(output_file);
 }
 
@@ -79,5 +79,3 @@ int mainProcess(QPainter &painter)
     }
     return 0;
 }
-
-
