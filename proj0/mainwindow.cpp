@@ -30,8 +30,10 @@ void MainWindow::paintEvent(QPaintEvent *)
     //Initial
     //ifstream infile;
     //"/Users/colin/github/finalwork2019/build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents"
-    //QString current_path = QCoreApplication::applicationDirPath();
-    QString current_path = "/Users/colin/github/finalwork2019/proj0";
+    QString current_path = QCoreApplication::applicationDirPath();
+    //QString current_path = "/Users/colin/github/finalwork2019/proj0";
+    QRegExp re("/[^/]*\.app/.*");   //don't use "?" ! I don't know why.
+    current_path.replace(re, "");
     QString input_file = current_path + "/eg11.logo";
     //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
     infile.open(input_file.toStdString());
