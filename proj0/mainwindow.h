@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <fstream>
 #include <iostream>
+#include <cmath>
 #include <string>
 #include <vector>
 #include <map>
