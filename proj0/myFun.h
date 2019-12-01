@@ -1,6 +1,7 @@
 #ifndef MYFUN_H
 #define MYFUN_H
 #include "mainwindow.h"
+#include <sstream>
 #include <QPainter>
 #include <QPen>
 #include <QFile>
@@ -190,6 +191,15 @@ double s2num(const string &_s)
     }
 }
 
+string num2s(const double &a)
+{
+    string s;
+    stringstream ss;
+    ss << a;
+    s = ss.str();
+    return s;
+}
+
 int ini_list()
 {
     tokens["DEF"]   = { 1, 2 };
@@ -351,9 +361,9 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                 ret = in_block_cmd->token;
                 sub_cmd.token = ret;
                 sub_cmd.data = in_block_cmd->data;
-                if (ret == 7)
-                    fake_stack++;
             }
+            if (ret == 7)
+                fake_stack++;
             if (ret > 0)
             {
                 if (ret != 8)   //not reach END LOOP
@@ -385,8 +395,8 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
     }
     else if (cmd.token == 10)   //FUNC [Name]([Para 1],[Para 2],...,[Para n])
     {
-        const int fun_type = 0;
-        codeBlock fun_block(fun_type);
+        //const int fun_type = 0;
+        codeBlock fun_block(0);
         fun_block.para_num = 0;
         auto cmd_data_length = cmd.data[0].length();
         int i_pos = 0;
@@ -445,13 +455,13 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
         fun_block.cmd_num = 0;
         while (1)
         {
-            myCmd cmd;
-            int ret = readLine(cmd);
-            if ((ret > 0 && ret != 8) || (ret == 8 && cmd.data[0] != "FUNC"))
+            myCmd in_fun_cmd;
+            int ret = readLine(in_fun_cmd);
+            if ((ret > 0 && ret != 8) || (ret == 8 && in_fun_cmd.data[0] != "FUNC"))
             {
                 if (ret != 10)
                 {
-                    fun_block.cmds.push_back(cmd);
+                    fun_block.cmds.push_back(in_fun_cmd);
                     fun_block.cmd_num++;
                 }
                 else
@@ -519,7 +529,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                             myCmd ini_var;
                             ini_var.token = 2;  //ADD
                             ini_var.data.push_back(cmd_it->data[0]);
-                            ini_var.data.push_back(para);
+                            ini_var.data.push_back(num2s(s2num(para)));
                             //this_fun->cmds.push_back(ini_var);
                             this_fun->cmds.insert(this_fun->cmds.end() - this_fun->cmd_num, ini_var);
                             have_ini++;
