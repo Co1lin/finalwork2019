@@ -8,7 +8,7 @@ FUNC doubleCircle(step)
 		DEF c 0
 		LOOP 360
 			COLOR c c c
-			IF cloak EQUAL 1
+			IF cloak GREATER_THAN 0
 				CLOAK
 			END IF
 			MOVE step

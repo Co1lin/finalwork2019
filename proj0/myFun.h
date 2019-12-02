@@ -215,10 +215,13 @@ int ini_list()
     tokens["FUNC"]  = { 10, 1 };
     //add-ons
     tokens["SET_WIDTH"] = { 21, 1 };
-    tokens["EQUAL"] = { 22, 2 };
-    tokens["IF"]    = { 23, 3 };
+    tokens["EQUAL"]     = { 22, 2 };
+    tokens["IF"]        = { 23, 3 };
+    tokens["MINUS"]     = { 24, 2 };
+    tokens["MULTIPLY"]  = { 25, 2 };
+    tokens["DIVIDE"]    = { 26, 2 };
     //debug
-    tokens["PRINT"] = {31, 1};
+    //tokens["PRINT"] = {31, 1};
 
     return 0;
 }
@@ -624,12 +627,48 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                 errorOccurred("In \"myExe\": In a IF operation, read unexpected contents.");
             //end if
         }//end while
-        if (abs(s2num(cmd.data[0]) - s2num(cmd.data[2])) <= 0.0001)
+        if (cmd.data[1] == "EQUAL" && abs(s2num(cmd.data[0]) - s2num(cmd.data[2])) <= 0.0001
+                || cmd.data[1] == "GREATER_THAN" && s2num(cmd.data[0]) - s2num(cmd.data[2]) > 0
+                || cmd.data[1] == "LESS_THAN" && s2num(cmd.data[0]) - s2num(cmd.data[2]) < 0)
             loop_block.exec(painter);   //Execute!
     }
     else if (cmd.token == 31)
     {
         cout << cmd.data[0] << endl;
+    }
+    else if (cmd.token == 24)    //MINUS [Name] [value]
+    {
+        auto it = find_var(cmd.data[0]);
+        if (it != vars.rend())  //find it!
+        {
+            it->var -= s2num(cmd.data[1]);
+        }
+        else
+            errorOccurred("In \"myExe\": MINUS operation can't find value.");
+    }
+    else if (cmd.token == 25)    //MULTIPLY [Name] [value]
+    {
+        auto it = find_var(cmd.data[0]);
+        if (it != vars.rend())  //find it!
+        {
+            it->var *= s2num(cmd.data[1]);
+        }
+        else
+            errorOccurred("In \"myExe\": MULTIPLY operation can't find value.");
+    }
+    else if (cmd.token == 2)    //DIVIDE [Name] [value]
+    {
+        auto it = find_var(cmd.data[0]);
+        if (it != vars.rend())  //find it!
+        {
+            double tmp = s2num(cmd.data[1]);
+            if (abs(tmp) > 0.0001)
+                it->var /= tmp;
+            else
+                errorOccurred("In \"myExe\": DIVIDE operation doesn't allow to divide a number by 0.");
+        }
+        else
+            errorOccurred("In \"myExe\": DIVIDE operation can't find value.");
     }
     else
         errorOccurred("In \"myExe\": Read invalid operation.");
