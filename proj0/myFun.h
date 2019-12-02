@@ -66,13 +66,14 @@ extern map<string, myOpt> tokens;
 extern vector<myVar> vars;
 extern Turtle turtle;
 extern ifstream infile;
+extern ofstream errorLog;
 
 double s2num(const string &s);  //convert a string(number string or variate string) to a double type number
 int ini_list(); //initialize the token map
 int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, double &ypos);
 int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block_cmd);
 int readLine(myCmd &cmd);
-void errorOccurred();
+void errorOccurred(const string &error);
 
 struct codeBlock
 {
@@ -172,10 +173,10 @@ double s2num(const string &_s)
                 return minus * it->var;
             }
             else
-                errorOccurred();
+                errorOccurred("In \"s2num\": Can't find value:" + s + ".");
         }
         else
-            errorOccurred();
+            errorOccurred("In \"s2num\": Invalid value:" + s + ".");
     }
     else
     {
@@ -212,6 +213,12 @@ int ini_list()
     tokens["END"]   = { 8, 1 };
     tokens["CALL"]  = { 9, 1 };
     tokens["FUNC"]  = { 10, 1 };
+    //add-ons
+    tokens["SET_WIDTH"] = { 21, 1 };
+    tokens["EQUAL"] = { 22, 2 };
+    tokens["IF"]    = { 23, 3 };
+    //debug
+    tokens["PRINT"] = {31, 1};
 
     return 0;
 }
@@ -235,7 +242,7 @@ int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, doub
                 height = h;
             }
             else
-                errorOccurred();    //? head data imcomplete
+                errorOccurred("In \"readHead\": Size in head data imcomplete.");    //? head data imcomplete
         }
         else if (in == "@BACKGROUND")
         {
@@ -248,7 +255,7 @@ int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, doub
                 b = bb;
             }
             else
-                errorOccurred();
+                errorOccurred("In \"readHead\": RGB in head data imcomplete.");
         }
         else if (in == "@POSITION")
         {
@@ -260,10 +267,10 @@ int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, doub
                 ypos = y;
             }
             else
-                errorOccurred();
+                errorOccurred("In \"readHead\": Position in head data imcomplete.");
         }
         else
-            errorOccurred();    //? head data imcomplete
+            errorOccurred("In \"readHead\": Head data imcomplete.");    //? head data imcomplete
     }
 
     return 0;
@@ -295,7 +302,10 @@ int readLine(myCmd &cmd)  //read Cmd
             return cmd.token;
         }
         else
+        {
+            errorOccurred("In \"readLine\": Read invalid operation: " + input + ".");
             return -1;
+        }
     }
     return -2;  //read EOF
 }
@@ -315,7 +325,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
             it->var += s2num(cmd.data[1]);
         }
         else
-            errorOccurred();
+            errorOccurred("In \"myExe\": ADD operation can't find value.");
     }
     else if (cmd.token == 3)    //MOVE [Step]
     {
@@ -331,14 +341,11 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
         int r = s2num(cmd.data[0]);
         int g = s2num(cmd.data[1]);
         int b = s2num(cmd.data[2]);
-        QPen pen;
+        QPen pen = painter.pen();
         pen.setColor(QColor(r, g, b));
-        pen.setWidth(3);
-        pen.setStyle(Qt::SolidLine);
-        pen.setCapStyle(Qt::RoundCap);
-        pen.setJoinStyle(Qt::RoundJoin);
         painter.setPen(pen);
     }
+
     else if (cmd.token == 6)    //CLOAK
     {
         turtle.cloak();
@@ -382,12 +389,14 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                             fake_stack--;
                         }
                     }
+                    else if (sub_cmd.data[0] == "IF")
+                        loop_block.cmds.push_back(sub_cmd);
                     else
-                        errorOccurred();
+                        errorOccurred("In \"myExe\": In a LOOP operation, read unexpected behind END: " + sub_cmd.data[0] +".");
                 }
             }
             else
-                errorOccurred();
+                errorOccurred("In \"myExe\": In a LOOP operation, read unexpected contents.");
             //end if
         }//end while
         //Execute!
@@ -425,7 +434,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
         {
             if (i_pos >= cmd_data_length)
             {
-                errorOccurred();
+                errorOccurred("In \"myExe:FUNC\": Invalid FUNC definition.");
                 break;
             }
             if ((cmd.data[0])[i_pos] != ' ')
@@ -465,10 +474,10 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                     fun_block.cmd_num++;
                 }
                 else
-                    errorOccurred();    //You can't define a function inside a function!
+                    errorOccurred("In \"myExe:FUNC\": Defining a function inside a function is not allowed.");    //You can't define a function inside a function!
             }
             else if (ret == -1) //read invalid token
-                errorOccurred();
+                errorOccurred("In \"myExe:FUNC\": Read unexpected commands inside a function definition");
             else if (ret == -2 || ret == 8)
                 break;
         }
@@ -511,7 +520,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
             {
                 if (i_pos >= cmd_data_length)
                 {
-                    errorOccurred();
+                    errorOccurred("In \"myExe:CALL\": Invalid FUNC CALL.");
                     break;
                 }
                 if ((cmd.data[0])[i_pos] != ' ')
@@ -539,7 +548,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                                 break;
                         }
                         else
-                            errorOccurred();    //number of parameters exceed!
+                            errorOccurred("In \"myExe:CALL\": Number of parameters excceed the number in function definition.");
                     }
                 }
                 i_pos++;
@@ -549,22 +558,89 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                 /*Warning: number of parameters is less than the definition*/;
         }//end if
         else
-            errorOccurred();    //Can't find function named fun_name
+            errorOccurred("In \"myExe:CALL\": Can't find function named " + fun_name + ".");    //Can't find function named fun_name
         //CALL the FUNC!
         this_fun->exec(painter);
         //delete the "ADD" command of parameters 123123456
         this_fun->cmds.erase(this_fun->cmds.begin() + this_fun->para_num, this_fun->cmds.end() - this_fun->cmd_num);
     }//end else if of CALL
-
+    else if (cmd.token == 21)   //SET_WIDTH [width]
+    {
+        QPen pen = painter.pen();
+        pen.setWidth(s2num(cmd.data[0]));
+        painter.setPen(pen);
+    }
+    else if (cmd.token == 22)   //EQUAL [a] [b]
+    {
+        double a = s2num(cmd.data[0]);
+        double b = s2num(cmd.data[1]);
+        return abs(a - b) <= 0.0001;
+    }
+    else if (cmd.token == 23)   //IF [a] EQUAL [b] ... END IF
+    {
+        //construct a codeBlock first
+        codeBlock loop_block(0);
+        int fake_stack = 0;
+        while (1)
+        {
+            myCmd sub_cmd;
+            int ret = 0;
+            if (in_block == 0)
+                ret = readLine(sub_cmd);
+            else    //in_block == 1
+            {
+                in_block_cmd++;
+                ret = in_block_cmd->token;
+                sub_cmd.token = ret;
+                sub_cmd.data = in_block_cmd->data;
+            }
+            if (ret == 23)
+                fake_stack++;
+            if (ret > 0)
+            {
+                if (ret != 8)   //not reach END (LOOP)
+                {
+                    loop_block.cmds.push_back(sub_cmd);
+                }
+                else    //read END
+                {
+                    if (sub_cmd.data[0] == "IF")
+                    {
+                        if (fake_stack == 0)
+                            break;  //stop while loop (stop inserting sub_cmd)
+                        else
+                        {
+                            loop_block.cmds.push_back(sub_cmd);
+                            fake_stack--;
+                        }
+                    }
+                    else if (sub_cmd.data[0] == "LOOP")
+                        loop_block.cmds.push_back(sub_cmd);
+                    else
+                        errorOccurred("In \"myExe\": In a IF operation, read unexpected behind END: " + sub_cmd.data[0] +".");
+                }
+            }
+            else
+                errorOccurred("In \"myExe\": In a IF operation, read unexpected contents.");
+            //end if
+        }//end while
+        if (abs(s2num(cmd.data[0]) - s2num(cmd.data[2])) <= 0.0001)
+            loop_block.exec(painter);   //Execute!
+    }
+    else if (cmd.token == 31)
+    {
+        cout << cmd.data[0] << endl;
+    }
     else
-        errorOccurred();
+        errorOccurred("In \"myExe\": Read invalid operation.");
 
     return 0;
 }
 
-void errorOccurred()
+void errorOccurred(const string &error)
 {
-    cout << "Error occurred!" << endl;
+    errorLog << "Error occurred:" << ' ';
+    errorLog << error << endl;
 }
 
 #endif // MYFUN_H

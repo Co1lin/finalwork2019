@@ -21,6 +21,7 @@ vector<myVar> vars;
 vector<codeBlock> funs;
 bool in_block = 0;
 ifstream infile;
+ofstream errorLog;
 Turtle turtle = { 0, 0, 0, 1 };
 
 int mainProcess(QPainter &painter);
@@ -35,8 +36,10 @@ void MainWindow::paintEvent(QPaintEvent *)
     QRegExp re("/[^/]*\.app/.*");   //don't use "?" ! I don't know why.
     current_path.replace(re, "");
     QString input_file = current_path + "/input.logo";
+    QString error_log = current_path + "errorLog.txt";
     //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
     infile.open(input_file.toStdString());
+    errorLog.open(error_log.toStdString());
     int width = 1920, height = 1080;
     int r = 0, g = 0, b = 0;
     //int xpos = 0, ypos = 0;
@@ -72,8 +75,8 @@ int mainProcess(QPainter &painter)
         {
             myExe(cmd, painter, fake);
         }
-        else if (ret == -1) //read invarid token
-            errorOccurred();
+        else if (ret == -1) //read invalid token
+            errorOccurred("In \"mainProcess\": Read invalid operation: ");
         else
             break;
     }
