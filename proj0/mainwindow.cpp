@@ -36,7 +36,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     QRegExp re("/[^/]*\.app/.*");   //don't use "?" ! I don't know why.
     current_path.replace(re, "");
     QString input_file = current_path + "/input.logo";
-    QString error_log = current_path + "errorLog.txt";
+    QString error_log = current_path + "/errorLog.txt";
     //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
     infile.open(input_file.toStdString());
     errorLog.open(error_log.toStdString());
