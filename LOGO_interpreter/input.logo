@@ -1,0 +1,16 @@
+@SIZE 1920 1080
+@BACKGROUND 255 255 255
+@POSITION 959 10
+
+FUNC Circle(step)
+	LOOP 360
+		MOVE step
+		TURN 1
+	END LOOP
+END FUNC
+
+DEF step 1
+LOOP 3
+	CALL Circle(step)
+	ADD step 1
+END LOOP
