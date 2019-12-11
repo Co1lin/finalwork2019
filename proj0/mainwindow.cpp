@@ -1,10 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "myFun.h"
-#include <QPainter>
-#include <QPen>
-#include <QFile>
-#include <QDir>
+#include <QCoreApplication>
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -20,43 +17,71 @@ MainWindow::~MainWindow()
 }
 
 map<string, myOpt> tokens;
-vector<myVal> vals;
+vector<myVar> vars;
+vector<codeBlock> funs;
+bool in_block = 0;
+ifstream infile;
+ofstream errorLog;
+Turtle turtle = { 0, 0, 0, 1 };
+
+int mainProcess(QPainter &painter);
 
 void MainWindow::paintEvent(QPaintEvent *)
 {
     //Initial
-    ifstream infile;
-    infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
+    //ifstream infile;
+    //"/Users/colin/github/finalwork2019/build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents/MacOS"
+    QString current_path = QCoreApplication::applicationDirPath();
+    /*
+    //QString current_path = "/Users/colin/github/finalwork2019/proj0";
+    QRegExp re("/[^/]*\.app/.*");   //don't use "?" ! I don't know why.
+    current_path.replace(re, "");
+    */
+    current_path += "/../../..";
+    QString input_file = current_path + "/input.logo";
+    QString error_log = current_path + "/errorLog.txt";
+    //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
+    infile.open(input_file.toStdString());
+    errorLog.open(error_log.toStdString());
     int width = 1920, height = 1080;
     int r = 0, g = 0, b = 0;
-    int xpos = 0, ypos = 0;
-    readHead(infile, width, height, r, g, b, xpos, ypos);
+    //int xpos = 0, ypos = 0;
+    readHead(width, height, r, g, b, turtle.x, turtle.y);
     QImage image(width, height, QImage::Format_ARGB32);
     image.fill({r, g, b});
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing, true);
+    QPen pen;
+    pen.setColor(QColor(0, 0, 0));
+    pen.setWidth(3);
+    pen.setStyle(Qt::SolidLine);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
+    painter.setPen(pen);
     ini_list();
     //Draw Picture!
-    mainProcess(infile);
+    mainProcess(painter);
 
     //Save
-    image.save("/Users/colin/github/finalwork2019/proj0/test0.bmp");
+    QString output_file = current_path + "/output.bmp";
+    image.save(output_file);
 }
 
-int mainProcess(ifstream &infile)
+int mainProcess(QPainter &painter)
 {
+    vector<myCmd>::iterator fake;
     while (1)
     {
         myCmd cmd;
-        int ret = readLine(infile, cmd);
-        if (!ret)
+        int ret = readLine(cmd);
+        if (ret > 0)
         {
-            myExe(cmd);
+            myExe(cmd, painter, fake);
         }
+        else if (ret == -1) //read invalid token
+            errorOccurred("In \"mainProcess\": Read invalid operation: ");
         else
             break;
     }
     return 0;
 }
-
-

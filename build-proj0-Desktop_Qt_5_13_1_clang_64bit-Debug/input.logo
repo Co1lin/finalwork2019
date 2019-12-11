@@ -1,0 +1,31 @@
+@SIZE 1920 1080
+@BACKGROUND 255 255 255
+@POSITION 959 10
+
+FUNC doubleCircle(step)
+	DEF cloak 0
+	LOOP 2
+		DEF c 0
+		LOOP 360
+			COLOR c c c
+			IF cloak GREATER_THAN 0
+				CLOAK
+			END IF
+			MOVE step
+			TURN 1
+			ADD c 0.7
+		END LOOP
+		ADD step 0.5
+		ADD cloak 1
+	END LOOP
+END FUNC
+
+DEF step 1
+DEF width 3
+SET_WIDTH width
+LOOP 3
+	CALL doubleCircle(step)
+	ADD step 1.5
+	ADD width 3
+	SET_WIDTH width
+END LOOP
