@@ -223,7 +223,6 @@ DIST          = /Applications/Qt/5.13.1/clang_64/mkspecs/features/spec_pre.prf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/qt_config.prf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/spec_post.prf \
-		../proj0/.qmake.stash \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/mac/sdk.prf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/toolchain.prf \
@@ -442,7 +441,6 @@ Makefile: ../proj0/proj0.pro /Applications/Qt/5.13.1/clang_64/mkspecs/macx-clang
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/qt_config.prf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/mac/sdk.prf \
 		/Applications/Qt/5.13.1/clang_64/mkspecs/features/toolchain.prf \
@@ -641,7 +639,6 @@ Makefile: ../proj0/proj0.pro /Applications/Qt/5.13.1/clang_64/mkspecs/macx-clang
 /Applications/Qt/5.13.1/clang_64/mkspecs/features/qt_config.prf:
 /Applications/Qt/5.13.1/clang_64/mkspecs/macx-clang/qmake.conf:
 /Applications/Qt/5.13.1/clang_64/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /Applications/Qt/5.13.1/clang_64/mkspecs/features/exclusive_builds.prf:
 /Applications/Qt/5.13.1/clang_64/mkspecs/features/mac/sdk.prf:
 /Applications/Qt/5.13.1/clang_64/mkspecs/features/toolchain.prf:
@@ -715,7 +712,6 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r proj0.app
-	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
