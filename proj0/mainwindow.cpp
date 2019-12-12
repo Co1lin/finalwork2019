@@ -24,22 +24,22 @@ ifstream infile;
 ofstream errorLog;
 Turtle turtle = { 0, 0, 0, 1 };
 
-int mainProcess(QPainter &painter);
+QString current_path;
+QString input_file;
+QString error_log;
+QString output_file;
+
+int mainProcess(QPainter &painter, QImage &image);
 
 void MainWindow::paintEvent(QPaintEvent *)
 {
     //Initial
-    //ifstream infile;
-    //"/Users/colin/github/finalwork2019/build-proj0-Desktop_Qt_5_13_1_clang_64bit-Debug/proj0.app/Contents/MacOS"
-    QString current_path = QCoreApplication::applicationDirPath();
-    /*
-    //QString current_path = "/Users/colin/github/finalwork2019/proj0";
-    QRegExp re("/[^/]*\.app/.*");   //don't use "?" ! I don't know why.
-    current_path.replace(re, "");
-    */
-    current_path += "/../../..";
-    QString input_file = current_path + "/input.logo";
-    QString error_log = current_path + "/errorLog.txt";
+    current_path = QCoreApplication::applicationDirPath();
+    if (current_path[1] != ':') //for Mac
+        current_path += "/../../..";
+    input_file = current_path + "/input.logo";
+    error_log = current_path + "/errorLog.txt";
+    output_file = current_path + "/output.bmp";
     //infile.open("/Users/colin/github/finalwork2019/proj0/test0.logo");
     infile.open(input_file.toStdString());
     errorLog.open(error_log.toStdString());
@@ -60,14 +60,15 @@ void MainWindow::paintEvent(QPaintEvent *)
     painter.setPen(pen);
     ini_list();
     //Draw Picture!
-    mainProcess(painter);
+    mainProcess(painter, image);
 
     //Save
-    QString output_file = current_path + "/output.bmp";
+    //QString output_file = current_path + "/output.bmp";
     image.save(output_file);
+    this->close();
 }
 
-int mainProcess(QPainter &painter)
+int mainProcess(QPainter &painter, QImage &image)
 {
     vector<myCmd>::iterator fake;
     while (1)
@@ -77,6 +78,7 @@ int mainProcess(QPainter &painter)
         if (ret > 0)
         {
             myExe(cmd, painter, fake);
+            image.save(output_file);
         }
         else if (ret == -1) //read invalid token
             errorOccurred("In \"mainProcess\": Read invalid operation: ");
