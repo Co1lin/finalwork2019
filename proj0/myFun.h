@@ -9,6 +9,8 @@
 using namespace std;
 
 static const double pi = 3.141592653589792;
+extern QImage* myimage;
+extern QString output_file;
 
 struct  Turtle
 {
@@ -37,7 +39,11 @@ struct  Turtle
         double yy = y + distance * sin(pi * angle / 180);
         QPointF p1(x, y), p2(xx, yy);
         if (not_cloak)
+        {
             painter.drawLine(p1, p2);
+            //saveimage
+            //myimage->save(output_file);
+        }
         //painter.drawLine(x, y, xx, yy);
         x = xx;
         y = yy;
