@@ -24,21 +24,21 @@ struct  Turtle
         not_cloak = 1;
     }
 
-    void turn(const double &delta)
+    void turn(const double& delta)
     {
         angle += delta;
         while (angle >= 360)
             angle -= 360;
     }
 
-    void move(const double &distance, QPainter &painter)
+    void move(const double& distance, QPainter& painter)
     {
         double xx = x + distance * cos(pi * angle / 180);
         double yy = y + distance * sin(pi * angle / 180);
         QPointF p1(x, y), p2(xx, yy);
         if (not_cloak)
             painter.drawLine(p1, p2);
-            //painter.drawLine(x, y, xx, yy);
+        //painter.drawLine(x, y, xx, yy);
         x = xx;
         y = yy;
     }
@@ -68,12 +68,12 @@ extern Turtle turtle;
 extern ifstream infile;
 extern ofstream errorLog;
 
-double s2num(const string &s);  //convert a string(number string or variate string) to a double type number
+double s2num(const string& s);  //convert a string(number string or variate string) to a double type number
 int ini_list(); //initialize the token map
-int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, double &ypos);
-int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block_cmd);
-int readLine(myCmd &cmd);
-void errorOccurred(const string &error);
+int readHead(int& width, int& height, int& r, int& g, int& b, double& xpos, double& ypos);
+int myExe(const myCmd& cmd, QPainter& painter, vector<myCmd>::iterator& in_block_cmd);
+int readLine(myCmd& cmd);
+void errorOccurred(const string& error);
 
 struct codeBlock
 {
@@ -83,14 +83,14 @@ struct codeBlock
     int para_num;
     int cmd_num;
 
-    codeBlock(const int &_type):type(_type) {}
+    codeBlock(const int& _type) :type(_type) {}
 
-    int exec(QPainter &painter);
+    int exec(QPainter& painter);
 };
 extern vector<codeBlock> funs;  //I'm here!
 extern bool in_block;
 
-auto find_var(const string &s)
+auto find_var(const string& s)
 {
     auto it = vars.rbegin();
     for (; it != vars.rend(); it++)
@@ -101,7 +101,7 @@ auto find_var(const string &s)
     return it;
 }
 
-auto find_fun(const string &s)
+auto find_fun(const string& s)
 {
     auto it = funs.begin();
     for (; it != funs.end(); it++)
@@ -112,7 +112,7 @@ auto find_fun(const string &s)
     return it;
 }
 
-int codeBlock::exec(QPainter &painter)
+int codeBlock::exec(QPainter& painter)
 {
     bool old_status = in_block;
     in_block = 1;
@@ -138,7 +138,7 @@ int codeBlock::exec(QPainter &painter)
     return 0;
 }
 
-double s2num(const string &_s)
+double s2num(const string& _s)
 {
     int minus = 1;
     string s;
@@ -192,7 +192,7 @@ double s2num(const string &_s)
     }
 }
 
-string num2s(const double &a)
+string num2s(const double& a)
 {
     string s;
     stringstream ss;
@@ -203,23 +203,23 @@ string num2s(const double &a)
 
 int ini_list()
 {
-    tokens["DEF"]   = { 1, 2 };
-    tokens["ADD"]   = { 2, 2 };
-    tokens["MOVE"]  = { 3, 1 };
-    tokens["TURN"]  = { 4, 1 };
+    tokens["DEF"] = { 1, 2 };
+    tokens["ADD"] = { 2, 2 };
+    tokens["MOVE"] = { 3, 1 };
+    tokens["TURN"] = { 4, 1 };
     tokens["COLOR"] = { 5, 3 };
     tokens["CLOAK"] = { 6, 0 };
-    tokens["LOOP"]  = { 7, 1 };
-    tokens["END"]   = { 8, 1 };
-    tokens["CALL"]  = { 9, 1 };
-    tokens["FUNC"]  = { 10, 1 };
+    tokens["LOOP"] = { 7, 1 };
+    tokens["END"] = { 8, 1 };
+    tokens["CALL"] = { 9, 1 };
+    tokens["FUNC"] = { 10, 1 };
     //add-ons
     tokens["SET_WIDTH"] = { 21, 1 };
-    tokens["EQUAL"]     = { 22, 2 };
-    tokens["IF"]        = { 23, 3 };
-    tokens["MINUS"]     = { 24, 2 };
-    tokens["MULTIPLY"]  = { 25, 2 };
-    tokens["DIVIDE"]    = { 26, 2 };
+    tokens["EQUAL"] = { 22, 2 };
+    tokens["IF"] = { 23, 3 };
+    tokens["MINUS"] = { 24, 2 };
+    tokens["MULTIPLY"] = { 25, 2 };
+    tokens["DIVIDE"] = { 26, 2 };
     //debug
     //tokens["PRINT"] = {31, 1};
     return 0;
@@ -228,7 +228,7 @@ int ini_list()
 //by Colin
 //There are too many arguments! It seems ugly, but it CAN run whatever.
 //So, let it be!
-int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, double &ypos)
+int readHead(int& width, int& height, int& r, int& g, int& b, double& xpos, double& ypos)
 {
     string in;
     for (int i = 1; i <= 3; i++)
@@ -263,7 +263,7 @@ int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, doub
         {
             int x, y;
             infile >> x >> y;
-            if (0 <= x && x <= width - 1 && 0 <= y && y <= height - 1 )
+            if (0 <= x && x <= width - 1 && 0 <= y && y <= height - 1)
             {
                 xpos = x;
                 ypos = y;
@@ -279,7 +279,7 @@ int readHead(int &width, int &height, int &r, int &g, int &b, double &xpos, doub
 }
 
 //by Colin
-int readLine(myCmd &cmd)  //read Cmd
+int readLine(myCmd& cmd)  //read Cmd
 {
     string input;
     while (infile >> input)
@@ -313,11 +313,11 @@ int readLine(myCmd &cmd)  //read Cmd
 }
 
 //by Colin
-int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block_cmd)
+int myExe(const myCmd& cmd, QPainter& painter, vector<myCmd>::iterator& in_block_cmd)
 {
     if (cmd.token == 1) //DEF [Name] [value]
     {
-        vars.push_back( { cmd.data[0], s2num(cmd.data[1]) } );
+        vars.push_back({ cmd.data[0], s2num(cmd.data[1]) });
     }
     else if (cmd.token == 2)    //ADD [Name] [value]
     {
@@ -394,7 +394,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                     else if (sub_cmd.data[0] == "IF")
                         loop_block.cmds.push_back(sub_cmd);
                     else
-                        errorOccurred("In \"myExe\": In a LOOP operation, read unexpected behind END: " + sub_cmd.data[0] +".");
+                        errorOccurred("In \"myExe\": In a LOOP operation, read unexpected behind END: " + sub_cmd.data[0] + ".");
                 }
             }
             else
@@ -619,7 +619,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
                     else if (sub_cmd.data[0] == "LOOP")
                         loop_block.cmds.push_back(sub_cmd);
                     else
-                        errorOccurred("In \"myExe\": In a IF operation, read unexpected behind END: " + sub_cmd.data[0] +".");
+                        errorOccurred("In \"myExe\": In a IF operation, read unexpected behind END: " + sub_cmd.data[0] + ".");
                 }
             }
             else
@@ -627,8 +627,8 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
             //end if
         }//end while
         if (cmd.data[1] == "EQUAL" && abs(s2num(cmd.data[0]) - s2num(cmd.data[2])) <= 0.0001
-                || cmd.data[1] == "GREATER_THAN" && s2num(cmd.data[0]) - s2num(cmd.data[2]) > 0
-                || cmd.data[1] == "LESS_THAN" && s2num(cmd.data[0]) - s2num(cmd.data[2]) < 0)
+            || cmd.data[1] == "GREATER_THAN" && s2num(cmd.data[0]) - s2num(cmd.data[2]) > 0
+            || cmd.data[1] == "LESS_THAN" && s2num(cmd.data[0]) - s2num(cmd.data[2]) < 0)
             loop_block.exec(painter);   //Execute!
     }
     else if (cmd.token == 31)
@@ -675,7 +675,7 @@ int myExe(const myCmd &cmd, QPainter &painter, vector<myCmd>::iterator &in_block
     return 0;
 }
 
-void errorOccurred(const string &error)
+void errorOccurred(const string& error)
 {
     errorLog << "Error occurred:" << ' ';
     errorLog << error << endl;
