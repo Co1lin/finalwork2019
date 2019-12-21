@@ -6,7 +6,7 @@
 #include <QPen>
 #include <QFile>
 #include <QDir>
-#include <Windows.h>
+//#include <Windows.h>
 using namespace std;
 
 static const double pi = 3.141592653589792;
