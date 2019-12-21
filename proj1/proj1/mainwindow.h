@@ -25,6 +25,10 @@ public:
     ~MainWindow();
     void paintEvent(QPaintEvent *);
     void myupdate();
+    void storeimg();
+    void outputimg();
+    void showimg(QString showedimg);
+    void showgif();
 
 private:
     Ui::MainWindow *ui;

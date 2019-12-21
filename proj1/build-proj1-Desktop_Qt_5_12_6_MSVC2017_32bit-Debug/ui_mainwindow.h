@@ -36,7 +36,7 @@ public:
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         label = new QLabel(centralwidget);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(50, 70, 701, 371));
+        label->setGeometry(QRect(10, 0, 781, 561));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -54,7 +54,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
-        label->setText(QApplication::translate("MainWindow", "1234567", nullptr));
+        label->setText(QString());
     } // retranslateUi
 
 };

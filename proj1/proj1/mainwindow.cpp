@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "myFun.h"
 #include <QCoreApplication>
+#include <thread>
+#include <sstream>
 using namespace std;
 
 map<string, myOpt> tokens;
@@ -17,28 +19,91 @@ QString input_file;
 QString error_log;
 QString output_file("");
 QImage* myimage = NULL;
-//QPixmap pimage;
+MainWindow* wtf;
+vector<QImage> imgs;
 
-char iii = 0;
+int iii = 0;
 int iiii = 0;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->label->setNum(iiii);
+    //ui->label->setNum(iiii);
+    ui->label->resize(this->size());
 }
 
 void MainWindow::myupdate()
 {
-    // 实例化QPixmap
-    QPixmap pimage;
-    // 给QPixamap加载图片
-    if (myimage != NULL)
-        pimage.convertFromImage(*myimage);
-    //pimage.load(output_file);
-    // 将图片展示到QLabel上
-    ui->label->setPixmap(pimage);
+    QPixmap pm;
+    pm.convertFromImage(*myimage);
+    //ui->label->setPixmap(pm);
+    //ui->label->update();
+    //ui->label->setNum(++iiii);
+    iiii++;
+    if (iiii % 100 == 0)
+    {
+        iii++;
+        stringstream s_index;
+        s_index << iii;
+        string s_iiii;
+        s_index >> s_iiii;
+        QString mysave = current_path + "/traces/" + QString::fromStdString(s_iiii) + ".jpg";
+        //QString mysave = current_path + "/" + QString::fromStdString(s_iiii) + ".bmp";
+        //cout << mysave.toStdString() << endl;
+        myimage->save(mysave);
+        iiii = 0;
+    }
+}
+
+void MainWindow::storeimg()
+{
+    iiii++;
+    if (iiii % 250 == 0)
+    {
+        imgs.push_back(*myimage);
+        iiii = 0;
+    }
+}
+
+void MainWindow::outputimg()
+{
+    int index = 0;
+    auto iter = imgs.begin();
+    for (; iter != imgs.end(); iter++)
+    {
+        index++;
+        stringstream ss_index;
+        ss_index << index;
+        string s_index;
+        ss_index >> s_index;
+        QString mysave = current_path + "/traces/" + QString::fromStdString(s_index) + ".jpg";
+        iter->save(mysave);
+    }
+}
+
+void MainWindow::showimg(QString showedimg)
+{
+    ui->label->resize(this->size());
+    QPixmap pm;
+    pm.load(showedimg);
+    QPainter showing(this);
+    showing.drawPixmap(0, 0, ui->label->width(), ui->label->height(), pm);
+    this->update();
+}
+
+void MainWindow::showgif()
+{
+    QString tobeshow = current_path + "/traces/";
+    for (int i = 1; i <= imgs.size(); i++)
+    {
+        stringstream ss_index;
+        ss_index << i;
+        string s_index;
+        ss_index >> s_index;
+        showimg(tobeshow + QString::fromStdString(s_index) + ".jpg");
+        system("pause");
+    }
 }
 
 MainWindow::~MainWindow()
@@ -81,13 +146,15 @@ void MainWindow::paintEvent(QPaintEvent *)
         ini_list();
         //Draw Picture!
         mainProcess(painter, image);
-
+        imgs.push_back(image);
         //Save
         //QString output_file = current_path + "/output.bmp";
         image.save(output_file);
+        outputimg();
         iii = 1;
     }
-    myupdate();
+    showimg(output_file);
+    //showgif();
 }
 
 

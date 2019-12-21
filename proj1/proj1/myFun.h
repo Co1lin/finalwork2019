@@ -6,11 +6,14 @@
 #include <QPen>
 #include <QFile>
 #include <QDir>
+#include <Windows.h>
 using namespace std;
 
 static const double pi = 3.141592653589792;
 extern QImage* myimage;
 extern QString output_file;
+extern MainWindow* wtf;
+extern int iiii;
 
 struct  Turtle
 {
@@ -41,11 +44,8 @@ struct  Turtle
         if (not_cloak)
         {
             painter.drawLine(p1, p2);
-            //saveimage
-            //myimage->save(output_file);
-
+            wtf->storeimg();
         }
-        //painter.drawLine(x, y, xx, yy);
         x = xx;
         y = yy;
     }
@@ -127,18 +127,10 @@ int codeBlock::exec(QPainter& painter)
     for (int i = 1; i <= tot; i++)
     {
         int ex_size = vars.size();
-        /*for (int ii = 0; ii <= cmds.size() - 1; ii++)
-        {
-            myExe(cmds[ii], painter, );
-        }*/
         for (auto it = cmds.begin(); it != cmds.end(); it++)
         {
             myExe(*it, painter, it);
         }
-        //delete the local variates
-        //auto start_pos = begin(vars) + ex_size;
-        //auto end_pos = begin(vars) + vars.size();
-        //vars.erase(start_pos, end_pos);
         vars.erase(vars.begin() + ex_size, vars.end());
     }
     in_block = old_status;
@@ -513,8 +505,6 @@ int myExe(const myCmd& cmd, QPainter& painter, vector<myCmd>::iterator& in_block
             }
         }//end for
         auto this_fun = find_fun(fun_name);
-        //auto ex_size = this_fun->cmds.size();
-        //auto origin_end = cmd_it + ex_size;
         if (this_fun != funs.end()) //find this function!
         {
             while ((cmd.data[0])[++i_pos] == ' ')
