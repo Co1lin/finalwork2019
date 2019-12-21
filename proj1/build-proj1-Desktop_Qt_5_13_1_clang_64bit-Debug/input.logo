@@ -1,72 +1,11 @@
-@SIZE 1800 1200
-@BACKGROUND 172 16 40
-@POSITION 300 300
+@SIZE 1000 1000
+@BACKGROUND 255 255 255
+@POSITION 500 5
 
-FUNC  star( r )
-          DEF a r
-          MULTIPLY a 0.726542528
-          TURN 270
-          MOVE r
-          TURN 162
-          LOOP 5
-                    MOVE a
-                    TURN 288
-                    MOVE a
-                    TURN 144
-          END LOOP
-          TURN 18
-          MOVE r
-          TURN 270
-END FUNC
-
-SET_WIDTH 2
-
-COLOR 240 201 84
-DEF r 180
-LOOP 45
-         CALL star(r)
-         ADD r -4
-END LOOP
-CLOAK
-MOVE 300
-TURN 90
-MOVE 240
-TURN 72
-COLOR 240 201 84
-DEF r 60
-LOOP 15
-         CALL star(r)
-         ADD r -4
-END LOOP
-CLOAK
-TURN 108
-MOVE 420
-TURN 41
-COLOR 240 201 84
-DEF r 60
-LOOP 15
-         CALL star(r)
-         ADD r -4
-END LOOP
-CLOAK
-TURN 49
-MOVE 120
-TURN 90
-MOVE 120
-TURN 27.87
-COLOR 240 201 84
-DEF r 60
-LOOP 15
-         CALL star(r)
-         ADD r -4
-END LOOP
-CLOAK
-TURN 332.13
-MOVE 180
-TURN 270
-COLOR 240 201 84
-DEF r 60
-LOOP 15
-         CALL star(r)
-         ADD r -4
+DEF ANGLE 0.5
+DEF DELTAANGLE 0.0003
+LOOP 40000
+  MOVE 3
+  TURN ANGLE
+  ADD ANGLE DELTAANGLE
 END LOOP

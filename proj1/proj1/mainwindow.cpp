@@ -59,7 +59,7 @@ void MainWindow::myupdate()
 void MainWindow::storeimg()
 {
     iiii++;
-    if (iiii % 5 == 0)
+    if (iiii % 6 == 0)
     {
         imgs.push_back(*myimage);
         iiii = 0;
