@@ -59,7 +59,7 @@ void MainWindow::myupdate()
 void MainWindow::storeimg()
 {
     iiii++;
-    if (iiii % 250 == 0)
+    if (iiii % 5 == 0)
     {
         imgs.push_back(*myimage);
         iiii = 0;
@@ -113,6 +113,8 @@ MainWindow::~MainWindow()
 
 int mainProcess(QPainter &painter, QImage &image);
 
+int indexofnow = 0;
+
 void MainWindow::paintEvent(QPaintEvent *)
 {
     while (!iii)
@@ -153,8 +155,17 @@ void MainWindow::paintEvent(QPaintEvent *)
         outputimg();
         iii = 1;
     }
-    showimg(output_file);
+    //showimg(output_file);
     //showgif();
+    QString tobeshow = current_path + "/traces/";
+    indexofnow++;
+    if (indexofnow == imgs.size() + 1)
+        indexofnow = 1;
+    stringstream ss_index;
+    ss_index << indexofnow;
+    string s_index;
+    ss_index >> s_index;
+    showimg(tobeshow + QString::fromStdString(s_index) + ".jpg");
 }
 
 
@@ -168,7 +179,6 @@ int mainProcess(QPainter &painter, QImage &image)
         if (ret > 0)
         {
             myExe(cmd, painter, fake);
-            //image.save(output_file);
         }
         else if (ret == -1) //read invalid token
             errorOccurred("In \"mainProcess\": Read invalid operation: ");
