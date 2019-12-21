@@ -1,38 +1,16 @@
 @SIZE 1920 1080
 @BACKGROUND 255 255 255
-@POSITION 400 120
+@POSITION 959 10
 
-FUNC circle( r )
-          DEF t 0.0087266186
-          MULTIPLY t r
-          TURN 0.25
-          LOOP 720
-                    MOVE t
-                    TURN 0.5
-          END LOOP
-          TURN 359.75
+FUNC Circle(step)
+	LOOP 360
+		MOVE step
+		TURN 1
+	END LOOP
 END FUNC
 
-SET_WIDTH 10
-
-COLOR 103 148 190
-CALL circle( 280 )
-CLOAK
-MOVE 560
-COLOR 27 28 30
-CALL circle( 280 )
-CLOAK
-MOVE 560
-COLOR 172 16 40
-CALL circle( 280 )
-CLOAK
-TURN 90
-MOVE 560
-COLOR 113 183 124
-CALL circle( 280 )
-CLOAK
-TURN 90
-MOVE 560
-TURN 270
-COLOR 240 201 84
-CALL circle( 280 )
+DEF step 1
+LOOP 3
+	CALL Circle(step)
+	ADD step 1
+END LOOP

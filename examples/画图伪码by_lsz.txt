@@ -1,0 +1,212 @@
+画五环
+@SIZE 1920 1080
+@BACKGROUND 255 255 255
+@POSITION 400 120
+
+FUNC circle( r ) 
+          DEF t 0.0087266186
+          MULTIPLY t r
+          TURN 0.25
+          LOOP 720
+                    MOVE t
+                    TURN 0.5
+          END LOOP
+          TURN 359.75
+END FUNC
+
+COLOR 103 148 190
+CALL circle( 280 )
+CLOAK
+MOVE 560
+COLOR 27 28 30
+CALL circle( 280 )
+CLOAK
+MOVE 560
+COLOR 172 16 40
+CALL circle( 280 )
+CLOAK
+TURN 90
+MOVE 560
+COLOR 113 183 124
+CALL circle( 280 )
+CLOAK
+TURN 90
+MOVE 560
+TURN 90
+COLOR 240 201 84
+CALL circle( 280 )
+
+FUNC  star( r )
+          TURN 72
+          LOOP 5
+                    MOVE r
+                    TURN 288
+                    MOVE r
+                    TURN 144
+          END LOOP
+          TURN 72
+END FUNC
+---------------------------------------------------------------------------------
+画国旗
+@SIZE 1800 1200
+@BACKGROUND 255 255 255
+@POSITION 300 300
+
+FUNC  star( r )
+          DEF a r
+          MULTIPLY a 0.726542528
+          TURN 270
+          CLOAK
+          MOVE r
+          TURN 162
+          COLOR 0 0 0
+          LOOP 5
+                    MOVE a
+                    TURN 288
+                    MOVE a
+                    TURN 144
+          END LOOP
+          CLOAK
+          TURN 18
+          MOVE r
+          TURN 270
+          COLOR 0 0 0
+END FUNC
+
+SET_WIDTH 5
+
+COLOR 0 0 0
+CALL star(180)
+CLOAK
+MOVE 300
+TURN 90
+MOVE 240
+TURN 72
+COLOR 0 0 0
+CALL star(60)
+CLOAK
+TURN 108
+MOVE 420
+TURN 41
+COLOR 0 0 0
+CALL star(60)
+CLOAK
+TURN 49
+MOVE 120
+TURN 90
+MOVE 120
+TURN 27.87
+COLOR 0 0 0
+CALL star(60)
+CLOAK
+TURN 332.13
+MOVE 180
+TURN 270
+COLOR 0 0 0
+CALL star(60)
+--------------------------------------------------------------------------------
+画国旗（填色版）//同心星覆盖
+@SIZE 1800 1200
+@BACKGROUND 172 16 40
+@POSITION 300 300
+
+FUNC  star( r )
+          DEF a r
+          MULTIPLY a 0.726542528
+          TURN 270
+          MOVE r
+          TURN 162
+          LOOP 5
+                    MOVE a
+                    TURN 288
+                    MOVE a
+                    TURN 144
+          END LOOP
+          TURN 18
+          MOVE r
+          TURN 270
+END FUNC
+
+SET_WIDTH 2
+
+COLOR 240 201 84
+DEF r 180
+LOOP 45
+         CALL star(r)
+         ADD r -4
+END LOOP
+CLOAK
+MOVE 300
+TURN 90
+MOVE 240
+TURN 72
+COLOR 240 201 84
+DEF r 60
+LOOP 15
+         CALL star(r)
+         ADD r -4
+END LOOP
+CLOAK
+TURN 108
+MOVE 420
+TURN 41
+COLOR 240 201 84
+DEF r 60
+LOOP 15
+         CALL star(r)
+         ADD r -4
+END LOOP
+CLOAK
+TURN 49
+MOVE 120
+TURN 90
+MOVE 120
+TURN 27.87
+COLOR 240 201 84
+DEF r 60
+LOOP 15
+         CALL star(r)
+         ADD r -4
+END LOOP
+CLOAK
+TURN 332.13
+MOVE 180
+TURN 270
+COLOR 240 201 84
+DEF r 60
+LOOP 15
+         CALL star(r)
+         ADD r -4
+END LOOP
+---------------------------------------------------------------------------------
+画立体星//递推变量大于画笔宽*2
+@SIZE 1800 1200
+@BACKGROUND 255 255 255
+@POSITION 300 300
+
+FUNC  star( r )
+          DEF a r
+          MULTIPLY a 0.726542528
+          TURN 270
+          MOVE r
+          TURN 162
+          LOOP 5
+                    MOVE a
+                    TURN 288
+                    MOVE a
+                    TURN 144
+          END LOOP
+          TURN 18
+          MOVE r
+          TURN 270
+END FUNC
+
+SET_WIDTH 1
+
+COLOR 0 0 0
+DEF r 225
+LOOP 45
+         CALL star(r)
+         ADD r -5
+END LOOP
+CLOAK
