@@ -14,6 +14,7 @@ ifstream infile;
 ofstream errorLog;
 Turtle turtle = { 0, 0, 0, 1 };
 
+bool is_on_mac = 1;
 QString current_path;
 QString input_file;
 QString error_log;
@@ -29,37 +30,13 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //ui->label->setNum(iiii);
     ui->label->resize(this->size());
-}
-
-void MainWindow::myupdate()
-{
-    QPixmap pm;
-    pm.convertFromImage(*myimage);
-    //ui->label->setPixmap(pm);
-    //ui->label->update();
-    //ui->label->setNum(++iiii);
-    iiii++;
-    if (iiii % 100 == 0)
-    {
-        iii++;
-        stringstream s_index;
-        s_index << iii;
-        string s_iiii;
-        s_index >> s_iiii;
-        QString mysave = current_path + "/traces/" + QString::fromStdString(s_iiii) + ".jpg";
-        //QString mysave = current_path + "/" + QString::fromStdString(s_iiii) + ".bmp";
-        //cout << mysave.toStdString() << endl;
-        myimage->save(mysave);
-        iiii = 0;
-    }
 }
 
 void MainWindow::storeimg()
 {
     iiii++;
-    if (iiii % 25 == 0)
+    if (iiii % 15 == 0)
     {
         imgs.push_back(*myimage);
         iiii = 0;
@@ -92,29 +69,24 @@ void MainWindow::showimg(QString showedimg)
     this->update();
 }
 
-void MainWindow::showgif()
-{
-    QString tobeshow = current_path + "/traces/";
-    for (int i = 1; i <= imgs.size(); i++)
-    {
-        stringstream ss_index;
-        ss_index << i;
-        string s_index;
-        ss_index >> s_index;
-        showimg(tobeshow + QString::fromStdString(s_index) + ".jpg");
-        system("pause");
-    }
-}
-
 MainWindow::~MainWindow()
 {
     delete ui;
+    if (is_on_mac)
+    {
+        string tmpcmd = "rm -rf " + current_path.toStdString() + "/traces/*";   //for Mac
+        cout << tmpcmd << endl;
+        system(tmpcmd.c_str());
+    }
+    else    //for Windows
+    {
+
+    }
 }
 
 int mainProcess(QPainter &painter, QImage &image);
 
 int indexofnow = 0;
-
 void MainWindow::paintEvent(QPaintEvent *)
 {
     if (iii == 0)
@@ -133,11 +105,19 @@ void MainWindow::paintEvent(QPaintEvent *)
     {
         //Initial
         current_path = QCoreApplication::applicationDirPath();
-        if (current_path[1] != ':') //for Mac
+        if (current_path[1] != ':')
+            is_on_mac = 1;
+        else
+            is_on_mac = 0;
+        if (is_on_mac) //for Mac
         {
             current_path += "/../../..";
             string tmpcmd = "mkdir " + current_path.toStdString() + "/traces";
-            //system(tmpcmd.c_str());
+            system(tmpcmd.c_str());
+        }
+        else    //for Windows
+        {
+
         }
         input_file = current_path + "/input.logo";
         error_log = current_path + "/errorLog.txt";
@@ -164,17 +144,13 @@ void MainWindow::paintEvent(QPaintEvent *)
         ini_list();
         //Draw Picture!
         mainProcess(painter, image);
-        imgs.push_back(image);
+        imgs.push_back(image);  //push the final img
         //Save
         //QString output_file = current_path + "/output.bmp";
         image.save(output_file);
         outputimg();
-        ui->label->setText("Generating animation, please wait...");
-        this->update();
         iii = 3;
     }
-    //showimg(output_file);
-    //showgif();
     if (iii >= 3)
     {
         ui->label->setText("");

@@ -2,12 +2,14 @@
 @BACKGROUND 255 255 255
 @POSITION 10 10
 FUNC line()
-DEF c 0 LOOP 20
+	DEF c 0
+	LOOP 20
         COLOR c c c
-        MOVE 2
+        MOVE 8
         ADD c 13
     END LOOP
 END FUNC
+
 LOOP 4
     CALL line()
     TURN 90

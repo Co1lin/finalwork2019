@@ -11,14 +11,13 @@ using namespace std;
 
 static const double pi = 3.141592653589792;
 extern QImage* myimage;
-extern QString output_file;
 extern MainWindow* wtf;
-extern int iiii;
 
 struct  Turtle
 {
     double x, y, angle;
     bool not_cloak;
+    const int divide_num = 1;
 
     void cloak()
     {
@@ -38,16 +37,29 @@ struct  Turtle
 
     void move(const double& distance, QPainter& painter)
     {
-        double xx = x + distance * cos(pi * angle / 180);
-        double yy = y + distance * sin(pi * angle / 180);
-        QPointF p1(x, y), p2(xx, yy);
-        if (not_cloak)
+        if (distance <= divide_num || !not_cloak)
         {
-            painter.drawLine(p1, p2);
-            wtf->storeimg();
+            double xx = x + distance * cos(pi * angle / 180);
+            double yy = y + distance * sin(pi * angle / 180);
+            QPointF p1(x, y), p2(xx, yy);
+            if (not_cloak)
+            {
+                painter.drawLine(p1, p2);
+                wtf->storeimg();
+            }
+            x = xx;
+            y = yy;
         }
-        x = xx;
-        y = yy;
+        else
+        {
+            int loop_count = distance / divide_num;
+            double remain = distance - loop_count * divide_num;
+            for (int i = 1; i <= loop_count; i++)
+            {
+                move(divide_num, painter);
+            }
+            move(remain, painter);
+        }
     }
 };
 
@@ -139,56 +151,24 @@ int codeBlock::exec(QPainter& painter)
 
 double s2num(const string& _s)
 {
-    int minus = 1;
-    string s;
-    if (_s[0] == '-')    //-1.345, l = 6
+    double ans = 0;
+    if (('A' <= _s[0] && _s[0] <= 'Z') || ('a' <= _s[0] && _s[0] <= 'z'))
     {
-        s = _s.substr(1, _s.length() - 1);
-        minus = -1;
-    }
-    else
-        s = _s;
-    //deal with '-' completed
-    auto point_pos = s.find('.');
-    int l = s.length();
-    if (point_pos == s.npos)    //integer type
-    {
-        if ('0' <= s[0] && s[0] <= '9')
+        auto it = find_var(_s);
+        if (it != vars.rend())   //find it!
         {
-            int ten = 1;
-            int num = 0;
-            for (int i = l - 1; i >= 0; i--)
-            {
-                num += (s[i] - '0') * ten;
-                ten *= 10;
-            }
-            return minus * num;
-        }
-        else if (('A' <= s[0] && s[0] <= 'Z') || ('a' <= s[0] && s[0] <= 'z'))
-        {
-            auto it = find_var(s);
-            if (it != vars.rend())   //find it!
-            {
-                return minus * it->var;
-            }
-            else
-                errorOccurred("In \"s2num\": Can't find value:" + s + ".");
+            ans =  it->var;
         }
         else
-            errorOccurred("In \"s2num\": Invalid value:" + s + ".");
+            errorOccurred("In \"s2num\": Can't find value:" + _s + ".");
     }
     else
     {
-        double num = 0;
-        num += s2num(s.substr(0, point_pos));
-        double ten = 0.1;
-        for (int i = point_pos + 1; i <= l - 1; i++)
-        {
-            num += (s[i] - '0') * ten;
-            ten /= 10;
-        }
-        return minus * num;
+        stringstream ss;
+        ss << _s;
+        ss >> ans;
     }
+    return ans;
 }
 
 string num2s(const double& a)
@@ -219,6 +199,7 @@ int ini_list()
     tokens["MINUS"] = { 24, 2 };
     tokens["MULTIPLY"] = { 25, 2 };
     tokens["DIVIDE"] = { 26, 2 };
+    tokens["SET_PIXEL"] = { 27, 5 };
     //debug
     //tokens["PRINT"] = {31, 1};
     return 0;
@@ -237,13 +218,13 @@ int readHead(int& width, int& height, int& r, int& g, int& b, double& xpos, doub
         {
             int w, h;
             infile >> w >> h;
-            if (320 <= w && w <= 1920 && 240 <= h && h <= 1080)
+            if (1 <= w && w <= 2000 && 1 <= h && h <= 2000)
             {
                 width = w;
                 height = h;
             }
             else
-                errorOccurred("In \"readHead\": Size in head data imcomplete.");    //? head data imcomplete
+                errorOccurred("In \"readHead\": Size in head data imcomplete or at least one onf them is not in range 1~2000.");    //? head data imcomplete
         }
         else if (in == "@BACKGROUND")
         {
@@ -652,7 +633,7 @@ int myExe(const myCmd& cmd, QPainter& painter, vector<myCmd>::iterator& in_block
         else
             errorOccurred("In \"myExe\": MULTIPLY operation can't find value.");
     }
-    else if (cmd.token == 2)    //DIVIDE [Name] [value]
+    else if (cmd.token == 26)    //DIVIDE [Name] [value]
     {
         auto it = find_var(cmd.data[0]);
         if (it != vars.rend())  //find it!
@@ -665,6 +646,16 @@ int myExe(const myCmd& cmd, QPainter& painter, vector<myCmd>::iterator& in_block
         }
         else
             errorOccurred("In \"myExe\": DIVIDE operation can't find value.");
+    }
+    else if (cmd.token == 27)    //SET_PIXEL [X] [Y] [R] [G] [B]
+    {
+        int x_set = s2num(cmd.data[0]);
+        int y_set = s2num(cmd.data[1]);
+        int r_set = s2num(cmd.data[2]);
+        int g_set = s2num(cmd.data[3]);
+        int b_set = s2num(cmd.data[4]);
+        myimage->setPixelColor(x_set, y_set, { r_set, g_set, b_set });
+        wtf->storeimg();
     }
     else
         errorOccurred("In \"myExe\": Read invalid operation.");

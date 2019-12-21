@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 #include <map>
-//#include "myFun.h"
 using namespace std;
 
 QT_BEGIN_NAMESPACE
@@ -24,11 +23,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void paintEvent(QPaintEvent *);
-    void myupdate();
     void storeimg();
     void outputimg();
     void showimg(QString showedimg);
-    void showgif();
 
 private:
     Ui::MainWindow *ui;
