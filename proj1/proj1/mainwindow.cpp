@@ -59,7 +59,7 @@ void MainWindow::myupdate()
 void MainWindow::storeimg()
 {
     iiii++;
-    if (iiii % 6 == 0)
+    if (iiii % 25 == 0)
     {
         imgs.push_back(*myimage);
         iiii = 0;
@@ -117,12 +117,28 @@ int indexofnow = 0;
 
 void MainWindow::paintEvent(QPaintEvent *)
 {
-    while (!iii)
+    if (iii == 0)
+    {
+        this->update();
+        iii++;
+    }
+    else if (iii == 1)
+    {
+        ui->label->resize(this->size());
+        ui->label->setText("Generating animation, please wait...");
+        this->update();
+        iii++;
+    }
+    else if (iii == 2)
     {
         //Initial
         current_path = QCoreApplication::applicationDirPath();
         if (current_path[1] != ':') //for Mac
+        {
             current_path += "/../../..";
+            string tmpcmd = "mkdir " + current_path.toStdString() + "/traces";
+            //system(tmpcmd.c_str());
+        }
         input_file = current_path + "/input.logo";
         error_log = current_path + "/errorLog.txt";
         output_file = current_path + "/output.bmp";
@@ -153,19 +169,25 @@ void MainWindow::paintEvent(QPaintEvent *)
         //QString output_file = current_path + "/output.bmp";
         image.save(output_file);
         outputimg();
-        iii = 1;
+        ui->label->setText("Generating animation, please wait...");
+        this->update();
+        iii = 3;
     }
     //showimg(output_file);
     //showgif();
-    QString tobeshow = current_path + "/traces/";
-    indexofnow++;
-    if (indexofnow == imgs.size() + 1)
-        indexofnow = 1;
-    stringstream ss_index;
-    ss_index << indexofnow;
-    string s_index;
-    ss_index >> s_index;
-    showimg(tobeshow + QString::fromStdString(s_index) + ".jpg");
+    if (iii >= 3)
+    {
+        ui->label->setText("");
+        QString tobeshow = current_path + "/traces/";
+        indexofnow++;
+        if (indexofnow == imgs.size() + 1)
+            indexofnow = 1;
+        stringstream ss_index;
+        ss_index << indexofnow;
+        string s_index;
+        ss_index >> s_index;
+        showimg(tobeshow + QString::fromStdString(s_index) + ".jpg");
+    }
 }
 
 
