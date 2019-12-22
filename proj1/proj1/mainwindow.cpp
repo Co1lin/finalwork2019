@@ -42,21 +42,35 @@ void MainWindow::storeimg()
         iiii = 0;
     }
 }
-
+int outputed = 0;
 void MainWindow::outputimg()
 {
-    int index = 0;
-    auto iter = imgs.begin();
-    for (; iter != imgs.end(); iter++)
+    const int basis = 1000;
+    int size = imgs.size();
+    double index = 0;  //0 ~ size - 1
+    double step = size / (double)basis;
+    step = step < 1.01 ? 1 : step;
+    bool the_last_one = 0;
+    while (index < size)
     {
-        index++;
+        int int_index = floor(index);
         stringstream ss_index;
-        ss_index << index;
+        ss_index << outputed;
         string s_index;
         ss_index >> s_index;
         QString mysave = current_path + "/traces/" + QString::fromStdString(s_index) + ".jpg";
-        iter->save(mysave);
+        imgs[int_index].save(mysave);
+        outputed++;
+        index += step;
+        if (the_last_one)
+            break;
+        if (index >= size)
+        {
+            index = size - 1;
+            the_last_one = 1;
+        }
     }
+
 }
 
 void MainWindow::showimg(QString showedimg)
@@ -97,7 +111,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     else if (iii == 1)
     {
         ui->label->resize(this->size());
-        ui->label->setText("Generating animation, please wait...");
+        ui->label->setText("Generating animation... Please wait...");
         this->update();
         iii++;
     }
@@ -150,19 +164,19 @@ void MainWindow::paintEvent(QPaintEvent *)
         image.save(output_file);
         outputimg();
         iii = 3;
+        ui->label->setText("");
     }
     if (iii >= 3)
     {
-        ui->label->setText("");
         QString tobeshow = current_path + "/traces/";
-        indexofnow++;
-        if (indexofnow == imgs.size() + 1)
-            indexofnow = 1;
+        if (indexofnow == outputed)
+            indexofnow = 0;
         stringstream ss_index;
         ss_index << indexofnow;
         string s_index;
         ss_index >> s_index;
         showimg(tobeshow + QString::fromStdString(s_index) + ".jpg");
+        indexofnow++;
     }
 }
 

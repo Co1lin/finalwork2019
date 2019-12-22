@@ -87,7 +87,7 @@ extern Turtle turtle;
 extern ifstream infile;
 extern ofstream errorLog;
 
-double s2num(const string& s);  //convert a string(number string or variate string) to a double type number
+double s2num(string _s);  //convert a string(number string or variate string) to a double type number
 int ini_list(); //initialize the token map
 int readHead(int& width, int& height, int& r, int& g, int& b, double& xpos, double& ypos);
 int myExe(const myCmd& cmd, QPainter& painter, vector<myCmd>::iterator& in_block_cmd);
@@ -149,8 +149,14 @@ int codeBlock::exec(QPainter& painter)
     return 0;
 }
 
-double s2num(const string& _s)
+double s2num(string _s)
 {
+    bool minus = 0;
+    if (_s[0] == '-')
+    {
+        _s = _s.substr(1, _s.length() - 1);
+        minus = 1;
+    }
     double ans = 0;
     if (('A' <= _s[0] && _s[0] <= 'Z') || ('a' <= _s[0] && _s[0] <= 'z'))
     {
@@ -168,7 +174,7 @@ double s2num(const string& _s)
         ss << _s;
         ss >> ans;
     }
-    return ans;
+    return minus == 0 ? ans : -ans;
 }
 
 string num2s(const double& a)
@@ -285,7 +291,9 @@ int readLine(myCmd& cmd)  //read Cmd
         }
         else
         {
-            errorOccurred("In \"readLine\": Read invalid operation: " + input + ".");
+            errorOccurred("In \"readLine\": Read invalid operation: " + input + "." +
+                          "\n                    --Sometimes this error happens because the last operation is wrong, such as the parameters are imcompleted.");
+            //errorOccurred("    --Sometimes this error happens because the last operation is wrong, such as the parameters are imcompleted.");
             return -1;
         }
     }
