@@ -15,7 +15,7 @@ CC            = cl
 CXX           = cl
 DEFINES       = -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -nologo -Zc:wchar_t -FS -Zc:strictStrings -Zi -MDd -W3 -w44456 -w44457 -w44458 /Fddebug\proj1.vc.pdb $(DEFINES)
-CXXFLAGS      = -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -EHsc /Fddebug\proj1.vc.pdb $(DEFINES)
+CXXFLAGS      = -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -std:c++14 -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -EHsc /Fddebug\proj1.vc.pdb $(DEFINES)
 INCPATH       = -I..\proj1 -I. -I..\..\..\..\QT\5.12.6\msvc2017\include -I..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets -I..\..\..\..\QT\5.12.6\msvc2017\include\QtGui -I..\..\..\..\QT\5.12.6\msvc2017\include\QtANGLE -I..\..\..\..\QT\5.12.6\msvc2017\include\QtCore -Idebug -I. -I/include -I..\..\..\..\QT\5.12.6\msvc2017\mkspecs\win32-msvc 
 LINKER        = link
 LFLAGS        = /NOLOGO /DYNAMICBASE /NXCOMPAT /DEBUG /SUBSYSTEM:WINDOWS "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'"
@@ -169,7 +169,7 @@ compiler_moc_predefs_make_all: debug\moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) debug\moc_predefs.h
 debug\moc_predefs.h: ..\..\..\..\QT\5.12.6\msvc2017\mkspecs\features\data\dummy.cpp
-	cl -BxD:\QT\5.12.6\msvc2017\bin\qmake.exe -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.12.6\msvc2017\mkspecs\features\data\dummy.cpp 2>NUL >debug\moc_predefs.h
+	cl -BxD:\QT\5.12.6\msvc2017\bin\qmake.exe -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -std:c++14 -W3 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 -wd4577 -wd4467 -E ..\..\..\..\QT\5.12.6\msvc2017\mkspecs\features\data\dummy.cpp 2>NUL >debug\moc_predefs.h
 
 compiler_moc_header_make_all: debug\moc_mainwindow.cpp
 compiler_moc_header_clean:
@@ -537,6 +537,25 @@ debug\mainwindow.obj: ..\proj1\mainwindow.cpp ..\proj1\mainwindow.h \
 		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\QDialog \
 		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qdialog.h \
 		ui_mainwindow.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\QVariant \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\QApplication \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qapplication.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\qcoreapplication.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\qeventloop.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qdesktopwidget.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtGui\qguiapplication.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtGui\qinputmethod.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\QLabel \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qlabel.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qframe.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\QMenuBar \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qmenubar.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qmenu.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qaction.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qactiongroup.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\QStatusBar \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\qstatusbar.h \
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtWidgets\QWidget \
 		..\proj1\myFun.h \
 		..\..\..\..\QT\5.12.6\msvc2017\include\QtGui\QPainter \
 		..\..\..\..\QT\5.12.6\msvc2017\include\QtGui\qpainter.h \
@@ -547,9 +566,7 @@ debug\mainwindow.obj: ..\proj1\mainwindow.cpp ..\proj1\mainwindow.h \
 		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\QDir \
 		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\qdir.h \
 		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\qfileinfo.h \
-		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\QCoreApplication \
-		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\qcoreapplication.h \
-		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\qeventloop.h
+		..\..\..\..\QT\5.12.6\msvc2017\include\QtCore\QCoreApplication
 
 debug\moc_mainwindow.obj: debug\moc_mainwindow.cpp 
 

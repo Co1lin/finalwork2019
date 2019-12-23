@@ -1,0 +1,1 @@
+D:\QT\5.12.6\msvc2017_64\bin\windeployqt.exe D:\Github\finalwork2019\win_release\LOGO_interpreter.exe

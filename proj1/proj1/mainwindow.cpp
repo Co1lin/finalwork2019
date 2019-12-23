@@ -89,12 +89,13 @@ MainWindow::~MainWindow()
     if (is_on_mac)
     {
         string tmpcmd = "rm -rf " + current_path.toStdString() + "/traces/*";   //for Mac
-        cout << tmpcmd << endl;
+        //cout << tmpcmd << endl;
         system(tmpcmd.c_str());
     }
     else    //for Windows
     {
-
+         string tmpcmd = "del /q \"" + current_path.toStdString() + "/traces\\*\"";
+         system(tmpcmd.c_str());
     }
 }
 
@@ -111,7 +112,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     else if (iii == 1)
     {
         ui->label->resize(this->size());
-        ui->label->setText("Generating animation... Please wait...");
+        ui->label->setText("Generating animation... Maybe the program is not responding, but it's normal.\nPlease wait...");
         this->update();
         iii++;
     }
@@ -131,7 +132,8 @@ void MainWindow::paintEvent(QPaintEvent *)
         }
         else    //for Windows
         {
-
+            string tmpcmd = "mkdir \"" + current_path.toStdString() + "/traces\"";
+            system(tmpcmd.c_str());
         }
         input_file = current_path + "/input.logo";
         error_log = current_path + "/errorLog.txt";
