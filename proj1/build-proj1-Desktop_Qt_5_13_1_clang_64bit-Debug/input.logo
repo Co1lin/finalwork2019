@@ -1,0 +1,18 @@
+@SIZE 1920 1080
+@BACKGROUND 255 255 255
+@POSITION 1000 200
+
+FUNC digui(layer)
+	IF layer LESS_THAN 3
+		DEF new layer
+		ADD new 1
+		CALL digui(new)
+	END IF
+	IF layer EQUAL 3
+		TURN 90
+		MOVE 300
+	END IF
+
+END FUNC
+
+CALL digui(2)

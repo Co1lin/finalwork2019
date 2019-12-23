@@ -1,0 +1,74 @@
+@SIZE 1920 1080
+@BACKGROUND 255 255 255
+@POSITION 960 540
+DEF a 2000
+DEF xn0 a
+DIVIDE xn0 2
+DEF xn2 0
+DEF yn0 a
+DIVIDE yn0 2
+MULTIPLY yn0 0
+DEF yn2 0
+DEF xm0 xn0
+DEF xm2 0
+DEF ym0 yn0
+DEF ym2 0
+DEF d 2
+MULTIPLY d 0.9998223524
+DEF d2 2
+MULTIPLY d2 0.9999802609
+DEF x yn0
+ADD x ym0
+DEF y -xn0
+ADD y xm0
+SET_PIXEL x y 0 0 0
+DEF xn1 a
+DIVIDE xn1 2
+MULTIPLY xn1 0.9998223524
+DEF yn1 a
+DIVIDE yn1 2
+MULTIPLY yn1 0.0188484397
+DEF xm1 a
+DIVIDE xm1 2
+MULTIPLY xm1 0.9999802609
+DEF ym1 a
+DIVIDE ym1 2
+MULTIPLY ym1 0.006283144
+DEF x yn1
+ADD x ym1
+DEF y -xn1
+ADD y xm1
+SET_PIXEL x y 0 0 0
+LOOP 999
+         DEF xn2 d
+         MULTIPLY xn1
+         ADD xn2 -xn0
+         DEF yn2 d
+         MULTIPLY yn1
+         ADD yn2 -yn0
+         DEF xm2 d2
+         MULTIPLY xm2 xm1
+         ADD xm2 -xm0
+         DEF ym2 d2
+         MULTIPLY ym2 ym1
+         ADD ym2 -ym0
+         DEF x yn2
+         ADD x ym2
+         DEF y -xn2
+         ADD y xm2
+         SET_PIXEL x y 0 0 0
+         DEF xn0 xn1
+         DEF yn0 yn1
+         DEF xn1 xn2
+         DEF yn1 yn2
+         DEF xm0 xm1
+         DEF ym0 ym1
+         DEF xm1 xm2
+         DEF ym1 ym2
+END LOOP
+
+
+
+
+
+
