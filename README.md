@@ -3,5 +3,5 @@ This is the final work for Basic Programming course (2019 Fall) .
 This project is a LOGO language interpreter, which reads "fake" LOGO language (an educational program language for kids) and executes it by C++.  
 The project is constructed by Qt Creator, so we have both Windows and MacOS version.  
 More details are included in readme.md in the released zip pack.  
-# Demo Video
-<iframe src="//player.bilibili.com/player.html?aid=80567732&cid=137878756&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+# Demo Video  
+https://www.bilibili.com/video/av80567732/
