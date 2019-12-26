@@ -36,7 +36,7 @@ CALL [FUNC_Name]([Para 1],[Para 2],...,[Para n])
 ## Advanced
 SET_WIDTH [WIDTH] //set the width of the trace line  
 
-    IF [VALUE] EQUAL [VALUE]  
+   IF [VALUE] EQUAL [VALUE]  
 or: IF [VALUE] GREATER_THAN [VALUE]  
 or: IF [VALUE] LESS_THAN [VALUE]  
 	...  
