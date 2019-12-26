@@ -1,43 +1,59 @@
-执行文件：[program_name].exe
-输入文件：input.logo  
-输出文件：output.bmp 
-命令详解见PDF文件
-命令说明文档：doc.txt
-错误信息输出：errorLog.txt
-执行过程中创建的文件夹：traces
+# Introduction
+This is the final work for Basic Programming course (2019 Fall).  
+This project is a LOGO language interpreter, which reads "fake" LOGO language (an educational program language for kids) and executes it by C++.  
+The project is constructed by Qt Creator, so we have both Windows and MacOS version.    
+# Demo Video  
+https://www.bilibili.com/video/av80567732/  
+# Highlights
+The highlights of our program is that we can display the animation of traces on the window for you!  
+Also, our program has some additional commands, which enables you to draw many beautiful but complex images with more convenience.  
+Enjoy yourself!  
+# Usage of LOGO codes
+Tips: You may replace the content in "[" and "]" (include "[" and "]) below by a number (integer or decimal) or a defined value.  
+You can add a single negative sign before the number or value, such as "-3" or "-a". We support it. But you can't write an expression.  
+## Basic
+### Head datas
+@SIZE [W] [H]  
+@BACKGROUND [R] [G] [B]  
+@POSITION [X] [Y]	//(0, 0) is at the upper left corner.  
+### Basic commands
+DEF [Name] [Value]  
+ADD [Name] [Value]	//e.g. ADD A 1 refers to A += 1  
+MOVE [Step]  
+COLOR [R] [G] [B]  
+CLOAK  
+### Control commands
+LOOP [LOOP_TIMES]  
+    ...  
+END LOOP  
 
-先写头信息！
+FUNC [Name]([Para 1],[Para 2],...,[Para n])	//define a function before the main commands  
+	...  
+END FUNC  
 
-命令：
-[VALUE]可以是数字（整数或小数）或者变量名
+CALL [FUNC_Name]([Para 1],[Para 2],...,[Para n])  
 
-DEF A [VALUE]
-ADD A [VALUE]	//A+=[VALUE]
-MOVE [VALUE]
-TURN [VALUE]	//顺时针
-COLOR [R] [G] [B]
-CLOAK	//隐身
+## Advanced
+SET_WIDTH [WIDTH] //set the width of the trace line  
 
-LOOP [VALUE]	//循环语句
-	...
-END LOOP
+    IF [VALUE] EQUAL [VALUE]  
+or: IF [VALUE] GREATER_THAN [VALUE]  
+or: IF [VALUE] LESS_THAN [VALUE]  
+	...  
+END IF  
 
-CALL [FUNCTION NAME]([PARA1], [PARA2], ...)
+MINUS [Name] [VALUE]	//[Name] -= [VALUE]  
+MULTIPLY [Name] [VALUE]	//[Name] *= [VALUE]  
+DIVIDE [Name] [VALUE]	//[Name] /= [VALUE]  
 
-FUNC [FUNCTION NAME]([PARA1], [PARA2], ...)
-
-//add-ons 附加功能
-MINUS A [VALUE]	//A-=[VALUE]
-MULTIPLY A [VALUE]	//A*=[VALUE]
-DIVIDE A [VALUE]	//A/=[VALUE]
-
-SET_WIDTH [VALUE]	//设置画笔宽度
-
-IF [VALUE] EQUAL [VALUE]	//三种IF语句
-或者：IF [VALUE] GREATER_THAN [VALUE]
-或者：IF [VALUE] LESS_THAN [VALUE]
-	...
-END IF
-
-
-
+SET_PIXEL [X] [Y] [R] [G] [B]	//set the color of pixel at (X, Y) as color (R, G, B)  
+# Usage of the released pack
+You can download the released zip pack according to you OS type on the release page of this repo.  
+Then, unzip it to get the folder. You can see these files:  
+ --(folder)  
+ ----input.logo  // The LOGO codes you want to execute.  
+ ----LOGO_interpreter.exe or LOGO_interpreter.app  // The application you can run.  
+ ----errorLog.txt  // Messages about the errors during executing codes in input.logo  
+ ----output.bmp  // BMP image drawed by the app according to codes in input.logo  
+ ----readme.md  // This document.  
+ ----examples (a folder)	// It contains some sample logo codes and corresponding output bmp image files.  

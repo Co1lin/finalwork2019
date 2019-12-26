@@ -1,16 +1,90 @@
-@SIZE 1920 1080
+@SIZE 1000 1000
 @BACKGROUND 255 255 255
-@POSITION 959 10
-
-FUNC Circle(step)
-	LOOP 360
-		MOVE step
-		TURN 1
-	END LOOP
-END FUNC
-
-DEF step 1
-LOOP 3
-	CALL Circle(step)
-	ADD step 1
+@POSITION 0 0
+DEF a 400
+DEF xn0 a
+DIVIDE xn0 2
+DEF yn0 a
+DIVIDE yn0 2
+MULTIPLY yn0 0
+DEF xm0 xn0
+DEF ym0 yn0
+DEF d 2
+MULTIPLY d 0.9999750177
+DEF d2 2
+MULTIPLY d2 0.9999848872
+DEF x yn0
+ADD x ym0
+ADD x 500
+DEF y -xn0
+ADD y xm0
+ADD y 500
+SET_PIXEL x y 0 0 0
+DEF xn1 a
+DIVIDE xn1 2
+MULTIPLY xn1 0.9999750177
+DEF yn1 a
+DIVIDE yn1 2
+MULTIPLY yn1 0.0070685264
+DEF xm1 a
+DIVIDE xm1 2
+MULTIPLY xm1 0.9999848872
+DEF ym1 a
+DIVIDE ym1 2
+MULTIPLY ym1 0.0054977594
+ADD x -x
+ADD x yn1
+ADD x ym1
+ADD x 500
+ADD y -y
+ADD y -xn1
+ADD y xm1
+ADD y 500
+SET_PIXEL x y 0 0 0
+DEF xn2 d
+DEF yn2 d
+DEF xm2 d2
+DEF ym2 d2
+LOOP 7999
+         ADD xn2 -xn2
+         ADD xn2 d
+         MULTIPLY xn2 xn1
+         ADD xn2 -xn0
+         ADD yn2 -yn2
+         ADD yn2 d
+         MULTIPLY yn2 yn1
+         ADD yn2 -yn0
+         ADD xm2 -xm2
+         ADD xm2 d2
+         MULTIPLY xm2 xm1
+         ADD xm2 -xm0
+         ADD ym2 -ym2
+         ADD ym2 d2
+         MULTIPLY ym2 ym1
+         ADD ym2 -ym0
+         ADD x -x
+         ADD x yn2
+         ADD x ym2
+		 ADD x 500
+         ADD y -y
+         ADD y -xn2
+         ADD y xm2
+		 ADD y 500
+         SET_PIXEL x y 0 0 0
+         ADD xn0 -xn0
+         ADD xn0 xn1
+         ADD yn0 -yn0
+         ADD yn0 yn1
+         ADD xn1 -xn1
+         ADD xn1 xn2
+         ADD yn1 -yn1
+         ADD yn1 yn2
+         ADD xm0 -xm0
+         ADD xm0 xm1
+         ADD ym0 -ym0
+         ADD ym0 ym1
+         ADD xm1 -xm1
+         ADD xm1 xm2
+         ADD ym1 -ym1
+         ADD ym1 ym2
 END LOOP

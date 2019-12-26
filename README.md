@@ -8,7 +8,7 @@ https://www.bilibili.com/video/av80567732/
 The highlights of our program is that we can display the animation of traces on the window for you!  
 Also, our program has some additional commands, which enables you to draw many beautiful but complex images with more convenience.  
 Enjoy yourself!  
-# Usage
+# Usage of LOGO codes
 Tips: You may replace the content in "[" and "]" (include "[" and "]) below by a number (integer or decimal) or a defined value.  
 You can add a single negative sign before the number or value, such as "-3" or "-a". We support it. But you can't write an expression.  
 ## Basic
@@ -47,3 +47,13 @@ MULTIPLY [Name] [VALUE]	//[Name] *= [VALUE]
 DIVIDE [Name] [VALUE]	//[Name] /= [VALUE]  
 
 SET_PIXEL [X] [Y] [R] [G] [B]	//set the color of pixel at (X, Y) as color (R, G, B)  
+# Usage of the released pack
+You can download the released zip pack according to you OS type on the release page of this repo.  
+Then, unzip it to get the folder. You can see these files:  
+ --(folder)  
+ ----input.logo  // The LOGO codes you want to execute.  
+ ----LOGO_interpreter.exe or LOGO_interpreter.app  // The application you can run.  
+ ----errorLog.txt  // Messages about the errors during executing codes in input.logo  
+ ----output.bmp  // BMP image drawed by the app according to codes in input.logo  
+ ----readme.md  // This document.  
+ ----examples (a folder)	// It contains some sample logo codes and corresponding output bmp image files.  
