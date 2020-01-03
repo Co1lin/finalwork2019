@@ -11,6 +11,7 @@ Enjoy yourself!
 # Usage of LOGO codes
 Tips: You may replace the content in "[" and "]" (include "[" and "]) below by a number (integer or decimal) or a defined value.  
 You can add a single negative sign before the number or value, such as "-3" or "-a". We support it. But you can't write an expression.  
+We don't support notes, like "//...".  
 ## Basic
 ### Head datas
 @SIZE [W] [H]  
